@@ -1,8 +1,5 @@
 [workspace]
-members =[ "index_buffer",
-    "texture",
-    "vertex_buffer",
-]
+members = ["index_buffer", "texture", "vertex_buffer"]
 resolver = "2"
 
 [workspace.dependencies]
@@ -12,4 +9,3 @@ anyhow = "1.0.42"
 tokio = "1.37.0"
 futures = "0.3.30"
 bytemuck = { version = "1.16.0", features = ["derive"] }
-
