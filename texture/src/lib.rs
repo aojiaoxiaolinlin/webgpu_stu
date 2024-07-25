@@ -304,16 +304,16 @@ struct Vertex {
 }
 const VERTICES: &[Vertex] = &[
     Vertex {
-        position: [-0.0868241, 0.49240386, 0.0],
+        position: [0.0, 0.5, 0.0],
         // 纹理坐标的原点在左上角
         tex_coords: [0.5131759, 1.0 - 0.99240386],
     }, // A
     Vertex {
-        position: [-0.49513406, 0.06958647, 0.0],
+        position: [-0.5, -0.5, 0.0],
         tex_coords: [0.0048659444, 1.0 - 0.56958647],
     }, // B
     Vertex {
-        position: [-0.21918549, -0.44939706, 0.0],
+        position: [0.5, -0.5, 0.0],
         tex_coords: [0.28081453, 1.0 - 0.05060294],
     }, // C
 ];
