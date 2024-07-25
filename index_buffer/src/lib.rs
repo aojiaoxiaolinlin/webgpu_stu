@@ -156,7 +156,7 @@ impl State<'_> {
             render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint16);
             render_pass.draw_indexed(0..self.num_indices, 0, 0..1);
             // 怎么画，3个顶点，1个实例
-            // render_pass.draw(0..self.num_vertices, 0..1);
+            render_pass.draw(0..self.num_vertices, 0..1);
         }
         self.queue.submit(std::iter::once(encoder.finish()));
         output.present();
