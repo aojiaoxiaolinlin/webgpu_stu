@@ -1,4 +1,5 @@
 use anyhow::anyhow;
+use glam::{Mat4, Vec3};
 use wgpu::{util::DeviceExt, SurfaceError};
 use winit::window::Window;
 pub struct State<'window> {
@@ -7,6 +8,7 @@ pub struct State<'window> {
     queue: wgpu::Queue,
     config: wgpu::SurfaceConfiguration,
     render_pipeline: wgpu::RenderPipeline,
+    vertex: [Vertex; 3],
     vertex_buffer: wgpu::Buffer,
     num_vertices: u32,
 }
@@ -96,9 +98,24 @@ impl State<'_> {
             },
             multiview: None,
         });
+        let scale = glam::Mat4::from_scale(Vec3::new(2.0, 2.0, 2.0));
+        let mut vertex = [
+            Vertex {
+                position: Vec3::from_array([0.0, 0.5, 0.0]),
+                color: Vec3::from_array([1.0, 0.0, 0.0]),
+            },
+            Vertex {
+                position: Vec3::from_array([-0.5, -0.5, 0.0]),
+                color: Vec3::from_array([0.0, 1.0, 0.0]),
+            },
+            Vertex {
+                position: Vec3::from_array([0.5, -0.5, 0.0]),
+                color: Vec3::from_array([0.0, 0.0, 1.0]),
+            },
+        ];
         let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Vertex Buffer"),
-            contents: bytemuck::cast_slice(VERTICES),
+            contents: bytemuck::cast_slice(&vertex),
             usage: wgpu::BufferUsages::VERTEX,
         });
         Ok(Self {
@@ -107,8 +124,9 @@ impl State<'_> {
             queue,
             config,
             render_pipeline,
+            vertex,
             vertex_buffer,
-            num_vertices: VERTICES.len() as u32,
+            num_vertices: vertex.len() as u32,
         })
     }
     pub fn render(&mut self) -> Result<(), SurfaceError> {
@@ -150,7 +168,17 @@ impl State<'_> {
         output.present();
         Ok(())
     }
-    pub fn update(&mut self) {}
+    pub fn update(&mut self) {
+        let rotation = glam::Mat4::from_rotation_z(0.01);
+        Vertex::transform(&mut self.vertex, rotation);
+        self.vertex_buffer = self
+            .device
+            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("Vertex Buffer"),
+                contents: bytemuck::cast_slice(&self.vertex),
+                usage: wgpu::BufferUsages::VERTEX,
+            });
+    }
     pub fn resize(&mut self, physical_size: winit::dpi::PhysicalSize<u32>) {
         if physical_size.width > 0 && physical_size.height > 0 {
             self.config.width = physical_size.width;
@@ -184,23 +212,9 @@ fn try_wgpu_backend(backend: wgpu::Backends) -> Option<wgpu::Instance> {
 #[repr(C)] // 保证结构体的内存布局和C语言一致，用于和C语言交互，共享数据
 #[derive(Debug, Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
 struct Vertex {
-    position: [f32; 3],
-    color: [f32; 3],
+    position: Vec3,
+    color: Vec3,
 }
-const VERTICES: &[Vertex] = &[
-    Vertex {
-        position: [0.0, 1.0, 0.0],
-        color: [1.0, 0.0, 0.0],
-    },
-    Vertex {
-        position: [-0.5, -0.5, 0.0],
-        color: [0.0, 1.0, 0.0],
-    },
-    Vertex {
-        position: [0.5, -0.5, 0.0],
-        color: [0.0, 0.0, 1.0],
-    },
-];
 
 impl Vertex {
     fn desc<'a>() -> wgpu::VertexBufferLayout<'a> {
@@ -220,6 +234,13 @@ impl Vertex {
                     shader_location: 1,
                 },
             ],
+        }
+    }
+
+    fn transform(vertex: &mut [Vertex], matrix: Mat4) {
+        for v in vertex {
+            let position: Vec3 = matrix.transform_point3(v.position.into()).into();
+            v.position = position;
         }
     }
 }

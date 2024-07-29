@@ -183,9 +183,9 @@ dependencies = [
 
 [[package]]
 name = "bytemuck_derive"
-version = "1.6.1"
+version = "1.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "369cfaf2a5bed5d8f8202073b2e093c9f508251de1551a0deb4253e4c7d80909"
+checksum = "1ee891b04274a59bd38b412188e24b849617b2e45a0fd8d057deb63e7403761b"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -614,6 +614,15 @@ dependencies = [
  "khronos_api",
  "log",
  "xml-rs",
+]
+
+[[package]]
+name = "glam"
+version = "0.28.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "779ae4bf7e8421cf91c0b3b64e7e8b40b862fba4d393f59150042de7c4965a94"
+dependencies = [
+ "bytemuck",
 ]
 
 [[package]]
@@ -1414,6 +1423,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "shader_transform"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bytemuck",
+ "futures",
+ "wgpu",
+ "winit",
+]
+
+[[package]]
 name = "simd-adler32"
 version = "0.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1618,6 +1638,18 @@ name = "tracing-core"
 version = "0.1.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c06d3da6113f116aaee68e4d601191614c9053067f9ab7f6edbcb161237daa54"
+
+[[package]]
+name = "transform"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bytemuck",
+ "futures",
+ "glam",
+ "wgpu",
+ "winit",
+]
 
 [[package]]
 name = "ttf-parser"

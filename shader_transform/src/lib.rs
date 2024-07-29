@@ -1,5 +1,5 @@
 use anyhow::anyhow;
-use wgpu::{util::DeviceExt, SurfaceError};
+use wgpu::SurfaceError;
 use winit::window::Window;
 pub struct State<'window> {
     surface: wgpu::Surface<'window>,
@@ -7,8 +7,6 @@ pub struct State<'window> {
     queue: wgpu::Queue,
     config: wgpu::SurfaceConfiguration,
     render_pipeline: wgpu::RenderPipeline,
-    vertex_buffer: wgpu::Buffer,
-    num_vertices: u32,
 }
 
 impl State<'_> {
@@ -65,7 +63,7 @@ impl State<'_> {
             vertex: wgpu::VertexState {
                 module: &shader,
                 entry_point: "vs_main",
-                buffers: &[Vertex::desc()],
+                buffers: &[],
                 compilation_options: Default::default(),
             },
             fragment: Some(wgpu::FragmentState {
@@ -96,19 +94,12 @@ impl State<'_> {
             },
             multiview: None,
         });
-        let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("Vertex Buffer"),
-            contents: bytemuck::cast_slice(VERTICES),
-            usage: wgpu::BufferUsages::VERTEX,
-        });
         Ok(Self {
             surface,
             device,
             queue,
             config,
             render_pipeline,
-            vertex_buffer,
-            num_vertices: VERTICES.len() as u32,
         })
     }
     pub fn render(&mut self) -> Result<(), SurfaceError> {
@@ -140,11 +131,8 @@ impl State<'_> {
                 ..Default::default()
             });
             render_pass.set_pipeline(&self.render_pipeline);
-            // 函数接收两个参数，第一个参数是顶点缓冲区要使用的缓冲槽索引。你可以连续设置多个顶点缓冲区。
-            // 第二个参数是要使用的缓冲区的数据片断
-            render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
             // 怎么画，3个顶点，1个实例
-            render_pass.draw(0..self.num_vertices, 0..1);
+            render_pass.draw(0..3, 0..1);
         }
         self.queue.submit(std::iter::once(encoder.finish()));
         output.present();
@@ -178,48 +166,5 @@ fn try_wgpu_backend(backend: wgpu::Backends) -> Option<wgpu::Instance> {
         None
     } else {
         Some(instance)
-    }
-}
-
-#[repr(C)] // 保证结构体的内存布局和C语言一致，用于和C语言交互，共享数据
-#[derive(Debug, Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
-struct Vertex {
-    position: [f32; 3],
-    color: [f32; 3],
-}
-const VERTICES: &[Vertex] = &[
-    Vertex {
-        position: [0.0, 1.0, 0.0],
-        color: [1.0, 0.0, 0.0],
-    },
-    Vertex {
-        position: [-0.5, -0.5, 0.0],
-        color: [0.0, 1.0, 0.0],
-    },
-    Vertex {
-        position: [0.5, -0.5, 0.0],
-        color: [0.0, 0.0, 1.0],
-    },
-];
-
-impl Vertex {
-    fn desc<'a>() -> wgpu::VertexBufferLayout<'a> {
-        wgpu::VertexBufferLayout {
-            // 顶点缓冲区的步长，即两个顶点数据间的间隔
-            array_stride: std::mem::size_of::<Vertex>() as wgpu::BufferAddress,
-            step_mode: wgpu::VertexStepMode::Vertex,
-            attributes: &[
-                wgpu::VertexAttribute {
-                    offset: 0,
-                    format: wgpu::VertexFormat::Float32x3,
-                    shader_location: 0,
-                },
-                wgpu::VertexAttribute {
-                    offset: std::mem::size_of::<[f32; 3]>() as wgpu::BufferAddress,
-                    format: wgpu::VertexFormat::Float32x3,
-                    shader_location: 1,
-                },
-            ],
-        }
     }
 }
