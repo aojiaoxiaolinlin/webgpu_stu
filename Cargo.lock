@@ -326,6 +326,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "copy_texture_to_texture"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bytemuck",
+ "futures",
+ "glam",
+ "wgpu",
+ "winit",
+]
+
+[[package]]
 name = "core-foundation"
 version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"

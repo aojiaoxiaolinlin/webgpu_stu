@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "copy_texture_to_texture",
     "index_buffer",
     "shader_transform",
     "texture",

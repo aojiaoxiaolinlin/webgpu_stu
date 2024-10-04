@@ -99,7 +99,7 @@ impl State<'_> {
             multiview: None,
         });
         let scale = glam::Mat4::from_scale(Vec3::new(2.0, 2.0, 2.0));
-        let mut vertex = [
+        let vertex = [
             Vertex {
                 position: Vec3::from_array([0.0, 0.5, 0.0]),
                 color: Vec3::from_array([1.0, 0.0, 0.0]),
