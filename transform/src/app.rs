@@ -22,7 +22,7 @@ impl ApplicationHandler for App<'_> {
                 .unwrap(),
         );
         if let Some(window) = &self.window {
-            self.state = Some(futures::executor::block_on(State::new(&window)).unwrap());
+            self.state = Some(futures::executor::block_on(State::new(window)).unwrap());
         }
         self.time = Some(Instant::now());
     }

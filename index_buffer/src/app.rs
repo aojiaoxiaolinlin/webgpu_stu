@@ -1,5 +1,10 @@
 use index_buffer::State;
-use winit::{application::ApplicationHandler, event::WindowEvent, event_loop::{ControlFlow, EventLoop}, window::Window};
+use winit::{
+    application::ApplicationHandler,
+    event::WindowEvent,
+    event_loop::{ControlFlow, EventLoop},
+    window::Window,
+};
 
 #[derive(Default)]
 pub struct App<'window> {
@@ -8,9 +13,13 @@ pub struct App<'window> {
 }
 impl ApplicationHandler for App<'_> {
     fn resumed(&mut self, event_loop: &winit::event_loop::ActiveEventLoop) {
-        self.window  = Some(event_loop.create_window(Window::default_attributes()).unwrap());
+        self.window = Some(
+            event_loop
+                .create_window(Window::default_attributes())
+                .unwrap(),
+        );
         if let Some(window) = &self.window {
-            self.state = Some(futures::executor::block_on(State::new(&window)).unwrap());
+            self.state = Some(futures::executor::block_on(State::new(window)).unwrap());
         }
     }
 
@@ -50,7 +59,7 @@ impl ApplicationHandler for App<'_> {
 }
 
 impl App<'_> {
-    pub fn run(){
+    pub fn run() {
         let event_loop = EventLoop::new().unwrap();
         event_loop.set_control_flow(ControlFlow::Poll);
         let mut app = App::default();
