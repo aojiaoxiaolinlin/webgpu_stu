@@ -1,10 +1,7 @@
 mod vertex;
 use anyhow::anyhow;
 use vertex::{calc_bundle, mesh_size, Mesh, INDICES, MESH, RECTANGLE};
-use wgpu::{
-    util::{DeviceExt, RenderEncoder},
-    SurfaceError, SurfaceTexture,
-};
+use wgpu::{util::DeviceExt, SurfaceError};
 use winit::{dpi::PhysicalSize, window::Window};
 pub struct State<'window> {
     surface: wgpu::Surface<'window>,
@@ -32,19 +29,17 @@ impl State<'_> {
                 compatible_surface: Some(&surface),
             })
             .await
-            .ok_or_else(|| anyhow!("没有可用适配器"))?;
+            .unwrap();
 
         dbg!(adapter.get_info());
 
         let (device, queue) = adapter
-            .request_device(
-                &wgpu::DeviceDescriptor {
-                    label: Some("设备"),
-                    required_features: wgpu::Features::empty(),
-                    required_limits: wgpu::Limits::default(),
-                },
-                None,
-            )
+            .request_device(&wgpu::DeviceDescriptor {
+                label: Some("设备"),
+                required_features: wgpu::Features::empty(),
+                required_limits: wgpu::Limits::default(),
+                ..Default::default()
+            })
             .await?;
         let caps = surface.get_capabilities(&adapter);
         let surface_format = caps
@@ -82,7 +77,7 @@ impl State<'_> {
             layout: Some(&render_pipeline_layout),
             vertex: wgpu::VertexState {
                 module: &shaper,
-                entry_point: "vertex",
+                entry_point: Some("vertex"),
                 compilation_options: Default::default(),
                 buffers: &[Mesh::desc()],
             },
@@ -105,7 +100,7 @@ impl State<'_> {
             },
             fragment: Some(wgpu::FragmentState {
                 module: &shaper,
-                entry_point: "fragment",
+                entry_point: Some("fragment"),
                 compilation_options: Default::default(),
                 targets: &[Some(wgpu::ColorTargetState {
                     format: config.format,
@@ -114,6 +109,7 @@ impl State<'_> {
                 })],
             }),
             multiview: None,
+            cache: None,
         });
 
         let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -152,7 +148,7 @@ impl State<'_> {
         let rectangle_vertex_buffer =
             device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
                 label: Some("矩形顶点缓冲"),
-                contents: bytemuck::cast_slice(&RECTANGLE),
+                contents: bytemuck::cast_slice(RECTANGLE),
                 usage: wgpu::BufferUsages::VERTEX,
             });
         let index_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
@@ -166,7 +162,7 @@ impl State<'_> {
                 layout: Some(&texture_render_pipeline_layout),
                 vertex: wgpu::VertexState {
                     module: &texture_shader,
-                    entry_point: "vertex",
+                    entry_point: Some("vertex"),
                     compilation_options: Default::default(),
                     buffers: &[Mesh::desc()],
                 },
@@ -187,7 +183,7 @@ impl State<'_> {
                 },
                 fragment: Some(wgpu::FragmentState {
                     module: &texture_shader,
-                    entry_point: "fragment",
+                    entry_point: Some("fragment"),
                     compilation_options: Default::default(),
                     targets: &[Some(wgpu::ColorTargetState {
                         blend: Some(wgpu::BlendState::REPLACE),
@@ -196,6 +192,7 @@ impl State<'_> {
                     })],
                 }),
                 multiview: None,
+                cache: None,
             });
 
         let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
@@ -302,7 +299,7 @@ impl State<'_> {
             .create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
 
         encoder.copy_texture_to_texture(
-            wgpu::ImageCopyTexture {
+            wgpu::TexelCopyTextureInfo {
                 texture: &output,
                 mip_level: 0,
                 origin: wgpu::Origin3d {
@@ -312,7 +309,7 @@ impl State<'_> {
                 },
                 aspect: wgpu::TextureAspect::All,
             },
-            wgpu::ImageCopyTexture {
+            wgpu::TexelCopyTextureInfo {
                 texture: &destination_texture,
                 mip_level: 0,
                 origin: Default::default(),
@@ -388,7 +385,7 @@ fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
 }
 
 fn try_wgpu_backend(backends: wgpu::Backends) -> Option<wgpu::Instance> {
-    let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
         backends,
         flags: wgpu::InstanceFlags::default().with_env(),
         ..Default::default()

@@ -26,17 +26,16 @@ impl State<'_> {
                 force_fallback_adapter: false,
             })
             .await
-            .ok_or_else(|| anyhow!("没有找到可用的适配器"))?;
+            .unwrap();
         dbg!(adapter.get_info());
         let (device, queue) = adapter
-            .request_device(
-                &wgpu::DeviceDescriptor {
-                    required_features: wgpu::Features::empty(),
-                    required_limits: wgpu::Limits::default(),
-                    label: Some("Device"),
-                },
-                None,
-            )
+            .request_device(&wgpu::DeviceDescriptor {
+                required_features: wgpu::Features::empty(),
+                required_limits: wgpu::Limits::default(),
+                label: Some("Device"),
+                memory_hints: wgpu::MemoryHints::default(),
+                trace: wgpu::Trace::Off,
+            })
             .await?;
         let caps = surface.get_capabilities(&adapter);
         let config = wgpu::SurfaceConfiguration {
@@ -81,7 +80,7 @@ impl State<'_> {
         // 将图像数据上传到纹理
         queue.write_texture(
             // 告诉 wgpu 从何处复制像素数据
-            wgpu::ImageCopyTextureBase {
+            wgpu::TexelCopyTextureInfoBase {
                 texture: &diffuse_texture,
                 mip_level: 0,
                 origin: wgpu::Origin3d::ZERO,
@@ -90,7 +89,7 @@ impl State<'_> {
             // 实际像素数据
             &diffuse_rgba,
             // 纹理的内存布局
-            wgpu::ImageDataLayout {
+            wgpu::TexelCopyBufferLayout {
                 offset: 0,
                 bytes_per_row: Some(4 * dimensions.0),
                 rows_per_image: Some(dimensions.1),
@@ -176,14 +175,14 @@ impl State<'_> {
             layout: Some(&render_pipeline_layout),
             vertex: wgpu::VertexState {
                 module: &shader,
-                entry_point: "vs_main",
+                entry_point: Some("vs_main"),
                 buffers: &[Vertex::desc()],
                 compilation_options: Default::default(),
             },
             fragment: Some(wgpu::FragmentState {
                 module: &shader,
                 compilation_options: Default::default(),
-                entry_point: "fs_main",
+                entry_point: Some("fs_main"),
                 targets: &[Some(wgpu::ColorTargetState {
                     format: config.format,
                     blend: Some(wgpu::BlendState::REPLACE),
@@ -207,6 +206,7 @@ impl State<'_> {
                 alpha_to_coverage_enabled: false,
             },
             multiview: None,
+            cache: None,
         });
         let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Vertex Buffer"),
@@ -284,7 +284,7 @@ fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
     Err(anyhow!("没有找到可用渲染后端"))
 }
 fn try_wgpu_backend(backend: wgpu::Backends) -> Option<wgpu::Instance> {
-    let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
         backends: backend,
         flags: wgpu::InstanceFlags::default().with_env(),
         ..Default::default()

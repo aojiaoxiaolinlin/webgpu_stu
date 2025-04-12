@@ -8,6 +8,7 @@
     "multiview",
     "repr",
     "Srgb",
+    "Texel",
     "unclipped",
     "Unorm",
     "webgpu",
