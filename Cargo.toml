@@ -1,11 +1,11 @@
 [workspace]
 members = [
     "copy_texture_to_texture",
-    "index_buffer",
+    "index_buffer", "render",
     "shader_transform",
     "texture",
     "transform",
-    "vertex_buffer",
+    "vertex_buffer", "window",
 ]
 resolver = "2"
 
