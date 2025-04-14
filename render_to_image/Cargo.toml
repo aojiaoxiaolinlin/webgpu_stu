@@ -1,0 +1,13 @@
+[package]
+name = "render_to_image"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+wgpu = { workspace = true }
+bytemuck = { workspace = true }
+futures = { workspace = true }
+anyhow = { workspace = true }
+
+image = "0.25.4"
+tracing = "0.1"

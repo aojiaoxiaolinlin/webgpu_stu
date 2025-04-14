@@ -42,6 +42,7 @@ impl State<'_> {
                     label: Some("设备"),
                     required_features: wgpu::Features::empty(),
                     required_limits: wgpu::Limits::default(),
+                    memory_hints: Default::default(),
                 },
                 None,
             )
@@ -114,6 +115,7 @@ impl State<'_> {
                 })],
             }),
             multiview: None,
+            cache: None,
         });
 
         let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -196,6 +198,7 @@ impl State<'_> {
                     })],
                 }),
                 multiview: None,
+                cache: None,
             });
 
         let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {

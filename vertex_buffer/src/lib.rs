@@ -32,6 +32,7 @@ impl State<'_> {
                     required_features: wgpu::Features::empty(),
                     required_limits: wgpu::Limits::default(),
                     label: Some("Device"),
+                    memory_hints: Default::default(),
                 },
                 None,
             )
@@ -82,7 +83,9 @@ impl State<'_> {
             primitive: wgpu::PrimitiveState {
                 topology: wgpu::PrimitiveTopology::TriangleList,
                 strip_index_format: None,
+                // Ccw表示逆时针为正面，Cw表示顺时针为正面
                 front_face: wgpu::FrontFace::Ccw,
+                // 面剔除：剔除背面的图元，从而减少绘制量
                 cull_mode: Some(wgpu::Face::Back),
                 unclipped_depth: false,
                 polygon_mode: wgpu::PolygonMode::Fill,
@@ -95,6 +98,7 @@ impl State<'_> {
                 alpha_to_coverage_enabled: false,
             },
             multiview: None,
+            cache: None,
         });
         let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Vertex Buffer"),

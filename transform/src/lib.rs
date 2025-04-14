@@ -34,6 +34,7 @@ impl State<'_> {
                     required_features: wgpu::Features::empty(),
                     required_limits: wgpu::Limits::default(),
                     label: Some("Device"),
+                    memory_hints: Default::default(),
                 },
                 None,
             )
@@ -97,6 +98,7 @@ impl State<'_> {
                 alpha_to_coverage_enabled: false,
             },
             multiview: None,
+            cache: None,
         });
         let scale = glam::Mat4::from_scale(Vec3::new(2.0, 2.0, 2.0));
         let vertex = [

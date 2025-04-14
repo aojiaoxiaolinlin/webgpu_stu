@@ -34,6 +34,7 @@ impl State<'_> {
                     required_features: wgpu::Features::empty(),
                     required_limits: wgpu::Limits::default(),
                     label: Some("Device"),
+                    memory_hints: Default::default(),
                 },
                 None,
             )
@@ -97,6 +98,7 @@ impl State<'_> {
                 alpha_to_coverage_enabled: false,
             },
             multiview: None,
+            cache: None,
         });
         let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Vertex Buffer"),
@@ -155,8 +157,6 @@ impl State<'_> {
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
             render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint16);
             render_pass.draw_indexed(0..self.num_indices, 0, 0..1);
-            // 怎么画，3个顶点，1个实例
-            render_pass.draw(0..self.num_vertices, 0..1);
         }
         self.queue.submit(std::iter::once(encoder.finish()));
         output.present();
@@ -217,28 +217,24 @@ struct Vertex {
 // 使用索引缓冲区
 const VERTICES: &[Vertex] = &[
     Vertex {
-        position: [-0.0868241, 0.49240386, 0.0],
-        color: [0.5, 0.0, 0.5],
-    }, // A
+        position: [0.5, 0.5, 0.0],
+        color: [1.0, 0.0, 0.0],
+    },
     Vertex {
-        position: [-0.49513406, 0.06958647, 0.0],
-        color: [0.5, 0.0, 0.5],
-    }, // B
+        position: [-0.5, 0.5, 0.0],
+        color: [0.0, 1.0, 0.0],
+    },
     Vertex {
-        position: [-0.21918549, -0.44939706, 0.0],
-        color: [0.5, 0.0, 0.5],
-    }, // C
+        position: [-0.5, -0.5, 0.0],
+        color: [0.0, 0.0, 1.0],
+    },
     Vertex {
-        position: [0.35966998, -0.3473291, 0.0],
-        color: [0.5, 0.0, 0.5],
-    }, // D
-    Vertex {
-        position: [0.44147372, 0.2347359, 0.0],
-        color: [0.5, 0.0, 0.5],
-    }, // E
+        position: [0.5, -0.5, 0.0],
+        color: [0.0, 1.0, 1.0],
+    },
 ];
 
-const INDICES: &[u16] = &[0, 1, 4, 1, 2, 4, 2, 3, 4];
+const INDICES: &[u16] = &[0, 1, 2, 0, 2, 3];
 
 impl Vertex {
     fn desc<'a>() -> wgpu::VertexBufferLayout<'a> {
