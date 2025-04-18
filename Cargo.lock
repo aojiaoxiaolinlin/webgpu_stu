@@ -831,7 +831,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0c2a198fb6b0eada2a8df47933734e6d35d350665a33a3593d7164fa52c75c19"
 dependencies = [
  "cfg-if",
- "windows-targets 0.48.5",
+ "windows-targets 0.52.6",
 ]
 
 [[package]]
@@ -1354,6 +1354,9 @@ dependencies = [
 name = "render"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
+ "bytemuck",
+ "futures",
  "wgpu",
  "winit",
 ]
@@ -2114,13 +2117,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4d4cc384e1e73b93bafa6fb4f1df8c41695c8a91cf9c4c64358067d15a7b6c6b"
 dependencies = [
  "windows-sys 0.52.0",
-]
-
-[[package]]
-name = "window"
-version = "0.1.0"
-dependencies = [
- "winit",
 ]
 
 [[package]]

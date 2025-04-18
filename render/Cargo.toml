@@ -5,4 +5,7 @@ edition = "2024"
 
 [dependencies]
 wgpu = { workspace = true }
+futures = { workspace = true }
 winit = { workspace = true }
+anyhow = { workspace = true }
+bytemuck = { workspace = true }

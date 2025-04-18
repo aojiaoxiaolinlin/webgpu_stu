@@ -25,7 +25,6 @@ impl State<'_> {
             })
             .await
             .expect("没有找到可用适配器");
-        dbg!(adapter.get_info());
         let (device, queue) = adapter
             .request_device(&wgpu::DeviceDescriptor {
                 required_features: wgpu::Features::empty(),

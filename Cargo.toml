@@ -5,7 +5,7 @@ members = [
     "shader_transform",
     "texture",
     "transform",
-    "vertex_buffer", "window",
+    "vertex_buffer",
 ]
 resolver = "2"
 
@@ -13,7 +13,7 @@ resolver = "2"
 wgpu = "25"
 winit = "0.30"
 anyhow = "1.0"
-tokio = "1.44"
+tokio = "1"
 futures = "0.3"
 glam = "0.29.0"
 

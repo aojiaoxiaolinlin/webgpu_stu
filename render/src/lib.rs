@@ -1,61 +1,88 @@
-use winit::window::Window;
+use render::Renderer;
+use wgpu::{RenderPass, RenderPipeline};
+use winit::{
+    application::ApplicationHandler, event::WindowEvent, event_loop::ControlFlow, window::Window,
+};
 
-pub struct RenderRes<'window> {
-    pub surface: wgpu::Surface<'window>,
-    pub device: wgpu::Device,
-    pub queue: wgpu::Queue,
-    pub config: wgpu::SurfaceConfiguration,
+pub mod render;
+
+pub struct WinitRunner<'window, T: SpecialRenderPipeline> {
+    renderer: Option<Renderer<'window, T>>,
 }
 
-impl<'window> RenderRes<'window> {
-    pub async fn new(window: &'window Window) -> RenderRes<'window> {
-        let size = window.inner_size();
-        let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
-            backends: wgpu::Backends::PRIMARY,
-            ..Default::default()
-        });
-        let surface = instance.create_surface(window).unwrap();
-        let adapter = instance
-            .request_adapter(&wgpu::RequestAdapterOptions {
-                power_preference: wgpu::PowerPreference::default(),
-                force_fallback_adapter: false,
-                compatible_surface: Some(&surface),
-            })
-            .await
-            .expect("没有找到可用适配器");
-        let (device, queue) = adapter
-            .request_device(&wgpu::DeviceDescriptor {
-                label: Some("设备"),
-                required_features: wgpu::Features::empty(),
-                required_limits: wgpu::Limits::default(),
-                memory_hints: wgpu::MemoryHints::default(),
-                trace: wgpu::Trace::Off,
-            })
-            .await
-            .expect("创建设备失败");
-
-        let surface_caps = surface.get_capabilities(&adapter);
-        let surface_format = surface_caps
-            .formats
-            .iter()
-            .find(|f| f.is_srgb())
-            .copied()
-            .unwrap_or(surface_caps.formats[0]);
-        let config = wgpu::SurfaceConfiguration {
-            usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
-            format: surface_format,
-            width: size.width,
-            height: size.height,
-            present_mode: surface_caps.present_modes[0],
-            desired_maximum_frame_latency: 2,
-            alpha_mode: surface_caps.alpha_modes[0],
-            view_formats: vec![],
-        };
+impl<T: SpecialRenderPipeline> WinitRunner<'_, T> {
+    pub fn new(render: T) -> Self {
         Self {
-            surface,
-            device,
-            queue,
-            config,
+            renderer: Some(Renderer::new(render)),
         }
     }
+}
+
+impl<'a, T: SpecialRenderPipeline> ApplicationHandler for WinitRunner<'a, T> {
+    fn resumed(&mut self, event_loop: &winit::event_loop::ActiveEventLoop) {
+        let window = event_loop
+            .create_window(Window::default_attributes())
+            .unwrap();
+        if let Some(renderer) = &mut self.renderer {
+            renderer.set_window(window);
+        }
+    }
+
+    fn window_event(
+        &mut self,
+        event_loop: &winit::event_loop::ActiveEventLoop,
+        _window_id: winit::window::WindowId,
+        event: winit::event::WindowEvent,
+    ) {
+        match event {
+            WindowEvent::CloseRequested => {
+                event_loop.exit();
+            }
+            WindowEvent::RedrawRequested => {
+                if let Some(renderer) = &mut self.renderer {
+                    match renderer.render() {
+                        Ok(_) => {}
+                        Err(e) => {
+                            eprintln!("{:?}", e);
+                        }
+                    }
+                }
+            }
+            WindowEvent::Resized(physical_size) => {
+                if physical_size.width > 0 && physical_size.height > 0 {
+                    if let Some(renderer) = &mut self.renderer {
+                        renderer.resize(physical_size);
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+}
+
+pub struct App;
+
+impl App {
+    pub fn run(render: impl SpecialRenderPipeline) {
+        let event_loop = winit::event_loop::EventLoop::new().unwrap();
+        event_loop.set_control_flow(ControlFlow::Poll);
+        let mut app = WinitRunner::new(render);
+
+        event_loop.run_app(&mut app).expect("运行失败");
+    }
+}
+
+pub trait SpecialRenderPipeline {
+    fn special_render_pipeline(
+        &self,
+        device: &wgpu::Device,
+        texture_format: wgpu::TextureFormat,
+    ) -> RenderPipeline;
+
+    fn draw(
+        &self,
+        render_pass: RenderPass,
+        render_pipeline: &RenderPipeline,
+        device: &wgpu::Device,
+    );
 }

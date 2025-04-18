@@ -8,9 +8,7 @@ pub struct State<'window> {
     config: wgpu::SurfaceConfiguration,
     render_pipeline: wgpu::RenderPipeline,
     vertex_buffer: wgpu::Buffer,
-    num_vertices: u32,
     index_buffer: wgpu::Buffer,
-    num_indices: u32,
 }
 
 impl State<'_> {
@@ -27,7 +25,6 @@ impl State<'_> {
             })
             .await
             .unwrap();
-        dbg!(adapter.get_info());
         let (device, queue) = adapter
             .request_device(&wgpu::DeviceDescriptor {
                 required_features: wgpu::Features::empty(),
@@ -108,7 +105,6 @@ impl State<'_> {
             contents: bytemuck::cast_slice(INDICES),
             usage: wgpu::BufferUsages::INDEX,
         });
-        let num_indices = INDICES.len() as u32;
         Ok(Self {
             surface,
             device,
@@ -116,9 +112,7 @@ impl State<'_> {
             config,
             render_pipeline,
             vertex_buffer,
-            num_vertices: VERTICES.len() as u32,
             index_buffer,
-            num_indices,
         })
     }
     pub fn render(&mut self) -> Result<(), SurfaceError> {
@@ -154,7 +148,7 @@ impl State<'_> {
             // 第二个参数是要使用的缓冲区的数据片断
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
             render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint16);
-            render_pass.draw_indexed(0..self.num_indices, 0, 0..1);
+            render_pass.draw_indexed(0..3, 0, 0..1);
         }
         self.queue.submit(std::iter::once(encoder.finish()));
         output.present();
@@ -197,20 +191,6 @@ struct Vertex {
     position: [f32; 3],
     color: [f32; 3],
 }
-// 这里顶点不只是被使用一次，所以需要使用索引缓冲区
-// const VERTICES: &[Vertex] = &[
-//     Vertex { position: [-0.0868241, 0.49240386, 0.0], color: [0.5, 0.0, 0.5] }, // A
-//     Vertex { position: [-0.49513406, 0.06958647, 0.0], color: [0.5, 0.0, 0.5] }, // B
-//     Vertex { position: [0.44147372, 0.2347359, 0.0], color: [0.5, 0.0, 0.5] }, // E
-
-//     Vertex { position: [-0.49513406, 0.06958647, 0.0], color: [0.5, 0.0, 0.5] }, // B
-//     Vertex { position: [-0.21918549, -0.44939706, 0.0], color: [0.5, 0.0, 0.5] }, // C
-//     Vertex { position: [0.44147372, 0.2347359, 0.0], color: [0.5, 0.0, 0.5] }, // E
-
-//     Vertex { position: [-0.21918549, -0.44939706, 0.0], color: [0.5, 0.0, 0.5] }, // C
-//     Vertex { position: [0.35966998, -0.3473291, 0.0], color: [0.5, 0.0, 0.5] }, // D
-//     Vertex { position: [0.44147372, 0.2347359, 0.0], color: [0.5, 0.0, 0.5] }, // E
-// ];
 
 // 使用索引缓冲区
 const VERTICES: &[Vertex] = &[
