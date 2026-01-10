@@ -10,7 +10,7 @@ members = [
 resolver = "2"
 
 [workspace.dependencies]
-wgpu = "25"
+wgpu = "28"
 winit = "0.30"
 anyhow = "1.0"
 tokio = "1"

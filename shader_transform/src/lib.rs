@@ -11,7 +11,7 @@ pub struct State<'window> {
 
 impl State<'_> {
     pub async fn new(window: &Window) -> anyhow::Result<Self> {
-        let (instance, _backend) = create_wgpu_instance()?;
+        let (instance, _backend) = create_wgpu_instance().await?;
         let surface = unsafe {
             instance.create_surface_unsafe(wgpu::SurfaceTargetUnsafe::from_window(&window)?)
         }?;
@@ -31,6 +31,7 @@ impl State<'_> {
                 label: Some("Device"),
                 memory_hints: wgpu::MemoryHints::default(),
                 trace: wgpu::Trace::Off,
+                experimental_features: wgpu::ExperimentalFeatures::disabled(),
             })
             .await?;
         let caps = surface.get_capabilities(&adapter);
@@ -54,7 +55,7 @@ impl State<'_> {
             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
                 label: Some("Render Pipeline Layout"),
                 bind_group_layouts: &[],
-                push_constant_ranges: &[],
+                immediate_size: 0,
             });
         let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("Render Pipeline"),
@@ -91,7 +92,7 @@ impl State<'_> {
                 mask: !0,
                 alpha_to_coverage_enabled: false,
             },
-            multiview: None,
+            multiview_mask: None,
             cache: None,
         });
         Ok(Self {
@@ -117,6 +118,7 @@ impl State<'_> {
                 label: Some("Render Pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &view,
+                    depth_slice: None,
                     resolve_target: None,
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Clear(wgpu::Color {
@@ -148,21 +150,21 @@ impl State<'_> {
     }
 }
 
-fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
+async fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
     for backend in wgpu::Backends::all() {
-        if let Some(instance) = try_wgpu_backend(backend) {
+        if let Some(instance) = try_wgpu_backend(backend).await {
             return Ok((instance, backend));
         }
     }
     Err(anyhow!("没有找到可用渲染后端"))
 }
-fn try_wgpu_backend(backend: wgpu::Backends) -> Option<wgpu::Instance> {
+async fn try_wgpu_backend(backend: wgpu::Backends) -> Option<wgpu::Instance> {
     let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
         backends: backend,
         flags: wgpu::InstanceFlags::default().with_env(),
         ..Default::default()
     });
-    if instance.enumerate_adapters(backend).is_empty() {
+    if instance.enumerate_adapters(backend).await.is_empty() {
         None
     } else {
         Some(instance)

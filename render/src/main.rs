@@ -21,7 +21,7 @@ impl SpecialRenderPipeline for OneRenderPipeline {
             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
                 label: Some("Render Pipeline Layout"),
                 bind_group_layouts: &[],
-                push_constant_ranges: &[],
+                immediate_size: 0,
             });
 
         let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -50,7 +50,7 @@ impl SpecialRenderPipeline for OneRenderPipeline {
                     write_mask: wgpu::ColorWrites::ALL,
                 })],
             }),
-            multiview: None,
+            multiview_mask: None,
             cache: None,
         });
 

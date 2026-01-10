@@ -18,7 +18,7 @@ pub struct State<'window> {
 
 impl State<'_> {
     pub async fn new(window: &Window) -> anyhow::Result<Self> {
-        let (instance, _backend) = create_wgpu_instance()?;
+        let (instance, _backend) = create_wgpu_instance().await?;
         let surface = unsafe {
             instance.create_surface_unsafe(wgpu::SurfaceTargetUnsafe::from_window(&window)?)
         }?;
@@ -69,7 +69,7 @@ impl State<'_> {
             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
                 label: Some("渲染管线布局"),
                 bind_group_layouts: &[],
-                push_constant_ranges: &[],
+                immediate_size: 0,
             });
 
         let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -108,7 +108,7 @@ impl State<'_> {
                     write_mask: wgpu::ColorWrites::ALL,
                 })],
             }),
-            multiview: None,
+            multiview_mask: None,
             cache: None,
         });
 
@@ -138,7 +138,7 @@ impl State<'_> {
             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
                 label: Some("纹理管线布局"),
                 bind_group_layouts: &[&bind_group_layout],
-                push_constant_ranges: &[],
+                immediate_size: 0,
             });
 
         let texture_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
@@ -191,7 +191,7 @@ impl State<'_> {
                         write_mask: wgpu::ColorWrites::ALL,
                     })],
                 }),
-                multiview: None,
+                multiview_mask: None,
                 cache: None,
             });
 
@@ -258,6 +258,7 @@ impl State<'_> {
                 label: Some("渲染通道"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &msaa_texture_view,
+                    depth_slice: None,
                     // 使用多重采样接收输出的视图
                     resolve_target: Some(&view),
                     ops: wgpu::Operations {
@@ -346,6 +347,7 @@ impl State<'_> {
                 label: Some("纹理渲染管道"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &view,
+                    depth_slice: None,
                     // 使用多重采样接收输出的视图
                     resolve_target: None,
                     ops: wgpu::Operations {
@@ -375,22 +377,22 @@ impl State<'_> {
     }
 }
 
-fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
+async fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
     for backend in wgpu::Backends::all() {
-        if let Some(instance) = try_wgpu_backend(backend) {
+        if let Some(instance) = try_wgpu_backend(backend).await {
             return Ok((instance, backend));
         }
     }
     Err(anyhow!("没有找到可用渲染后端"))
 }
 
-fn try_wgpu_backend(backends: wgpu::Backends) -> Option<wgpu::Instance> {
+async fn try_wgpu_backend(backends: wgpu::Backends) -> Option<wgpu::Instance> {
     let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
         backends,
         flags: wgpu::InstanceFlags::default().with_env(),
         ..Default::default()
     });
-    if instance.enumerate_adapters(backends).is_empty() {
+    if instance.enumerate_adapters(backends).await.is_empty() {
         None
     } else {
         Some(instance)
@@ -430,7 +432,7 @@ pub fn create_depth_texture(
         address_mode_w: wgpu::AddressMode::ClampToEdge,
         mag_filter: wgpu::FilterMode::Linear,
         min_filter: wgpu::FilterMode::Linear,
-        mipmap_filter: wgpu::FilterMode::Nearest,
+        mipmap_filter: wgpu::MipmapFilterMode::Nearest,
         lod_min_clamp: 0.0,
         lod_max_clamp: 200.0,
         compare: Some(wgpu::CompareFunction::LessEqual),

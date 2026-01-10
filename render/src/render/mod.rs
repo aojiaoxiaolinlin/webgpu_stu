@@ -37,6 +37,7 @@ impl RenderRes<'_> {
                 required_limits: wgpu::Limits::default(),
                 memory_hints: wgpu::MemoryHints::default(),
                 trace: wgpu::Trace::Off,
+                experimental_features: wgpu::ExperimentalFeatures::disabled(),
             })
             .await
             .expect("创建设备失败");
@@ -112,6 +113,7 @@ impl<T: SpecialRenderPipeline> Renderer<'_, T> {
                 label: Some("Render Pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &view,
+                    depth_slice: None,
                     resolve_target: None,
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT),

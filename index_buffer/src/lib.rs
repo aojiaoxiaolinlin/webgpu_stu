@@ -1,5 +1,5 @@
 use anyhow::anyhow;
-use wgpu::{SurfaceError, util::DeviceExt};
+use wgpu::{BlendComponent, SurfaceError, TextureFormat, util::DeviceExt};
 use winit::window::Window;
 pub struct State<'window> {
     surface: wgpu::Surface<'window>,
@@ -13,7 +13,7 @@ pub struct State<'window> {
 
 impl State<'_> {
     pub async fn new(window: &Window) -> anyhow::Result<Self> {
-        let (instance, _backend) = create_wgpu_instance()?;
+        let (instance, _backend) = create_wgpu_instance().await?;
         let surface = unsafe {
             instance.create_surface_unsafe(wgpu::SurfaceTargetUnsafe::from_window(&window)?)
         }?;
@@ -32,12 +32,18 @@ impl State<'_> {
                 label: Some("Device"),
                 memory_hints: wgpu::MemoryHints::default(),
                 trace: wgpu::Trace::Off,
+                experimental_features: wgpu::ExperimentalFeatures::disabled(),
             })
             .await?;
         let caps = surface.get_capabilities(&adapter);
+        let format = TextureFormat::Rgba8Unorm;
         let config = wgpu::SurfaceConfiguration {
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
-            format: caps.formats[0],
+            format: if caps.formats.contains(&format) {
+                format
+            } else {
+                caps.formats[0]
+            },
             width: window.inner_size().width,
             height: window.inner_size().height,
             present_mode: wgpu::PresentMode::Fifo,
@@ -55,7 +61,7 @@ impl State<'_> {
             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
                 label: Some("Render Pipeline Layout"),
                 bind_group_layouts: &[],
-                push_constant_ranges: &[],
+                immediate_size: 0,
             });
         let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("Render Pipeline"),
@@ -73,6 +79,14 @@ impl State<'_> {
                 targets: &[Some(wgpu::ColorTargetState {
                     format: config.format,
                     blend: Some(wgpu::BlendState::REPLACE),
+                    // blend: Some(wgpu::BlendState {
+                    //     color: BlendComponent {
+                    //         src_factor: wgpu::BlendFactor::One,
+                    //         dst_factor: wgpu::BlendFactor::One,
+                    //         operation: wgpu::BlendOperation::Add,
+                    //     },
+                    //     alpha: BlendComponent::OVER,
+                    // }),
                     write_mask: wgpu::ColorWrites::ALL,
                 })],
             }),
@@ -92,7 +106,7 @@ impl State<'_> {
                 mask: !0,
                 alpha_to_coverage_enabled: false,
             },
-            multiview: None,
+            multiview_mask: None,
             cache: None,
         });
         let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
@@ -130,6 +144,7 @@ impl State<'_> {
                 label: Some("Render Pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &view,
+                    depth_slice: None,
                     resolve_target: None,
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Clear(wgpu::Color {
@@ -148,7 +163,7 @@ impl State<'_> {
             // 第二个参数是要使用的缓冲区的数据片断
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
             render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint16);
-            render_pass.draw_indexed(0..3, 0, 0..1);
+            render_pass.draw_indexed(0..INDICES.len() as u32, 0, 0..1);
         }
         self.queue.submit(std::iter::once(encoder.finish()));
         output.present();
@@ -164,21 +179,21 @@ impl State<'_> {
     }
 }
 
-fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
+async fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
     for backend in wgpu::Backends::all() {
-        if let Some(instance) = try_wgpu_backend(backend) {
+        if let Some(instance) = try_wgpu_backend(backend).await {
             return Ok((instance, backend));
         }
     }
     Err(anyhow!("没有找到可用渲染后端"))
 }
-fn try_wgpu_backend(backend: wgpu::Backends) -> Option<wgpu::Instance> {
+async fn try_wgpu_backend(backend: wgpu::Backends) -> Option<wgpu::Instance> {
     let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
         backends: backend,
         flags: wgpu::InstanceFlags::default().with_env(),
         ..Default::default()
     });
-    if instance.enumerate_adapters(backend).is_empty() {
+    if instance.enumerate_adapters(backend).await.is_empty() {
         None
     } else {
         Some(instance)
@@ -191,7 +206,6 @@ struct Vertex {
     position: [f32; 3],
     color: [f32; 3],
 }
-
 // 使用索引缓冲区
 const VERTICES: &[Vertex] = &[
     Vertex {
@@ -232,5 +246,41 @@ impl Vertex {
                 },
             ],
         }
+    }
+}
+
+/// 🎨 标准 sRGB 转 Linear RGB 转换器
+///
+/// 这是一个纯 Rust 实现，不依赖任何第三方库。
+/// 遵循 IEC 61966-2-1 标准 (混合了线性段和指数段)。
+pub mod color_utils {
+
+    /// 将单个 sRGB 通道 (0.0 - 1.0) 转换为 Linear 通道 (0.0 - 1.0)
+    pub fn srgb_to_linear(s: f64) -> f64 {
+        // 1. 确保输入在合理范围内（虽然通常不会越界，但为了安全喵）
+        let s = s.clamp(0.0, 1.0);
+
+        // 2. 标准公式判定
+        // 如果颜色很暗 (<= 0.04045)，使用线性变换 (除以 12.92)
+        // 否则使用 Gamma 2.4 变换 (稍微偏移后取 2.4 次方)
+        if s <= 0.04045 {
+            s / 12.92
+        } else {
+            ((s + 0.055) / 1.055).powf(2.4)
+        }
+    }
+
+    /// 便捷函数：输入整数 RGB (0-255)，输出线性 RGB 数组 [r, g, b]
+    pub fn srgb_u8_to_linear(r: u8, g: u8, b: u8) -> [f64; 3] {
+        // 先把 0-255 归一化到 0.0-1.0
+        let r_norm = r as f64 / 255.0;
+        let g_norm = g as f64 / 255.0;
+        let b_norm = b as f64 / 255.0;
+
+        [
+            srgb_to_linear(r_norm),
+            srgb_to_linear(g_norm),
+            srgb_to_linear(b_norm),
+        ]
     }
 }

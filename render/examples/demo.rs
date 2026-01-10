@@ -23,7 +23,7 @@ impl SpecialRenderPipeline for VertexRenderPipeline {
             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
                 label: Some("Render Pipeline Layout"),
                 bind_group_layouts: &[],
-                push_constant_ranges: &[],
+                immediate_size: 0,
             });
 
         let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -52,7 +52,7 @@ impl SpecialRenderPipeline for VertexRenderPipeline {
                     write_mask: wgpu::ColorWrites::ALL,
                 })],
             }),
-            multiview: None,
+            multiview_mask: None,
             cache: None,
         });
 
@@ -80,6 +80,10 @@ impl SpecialRenderPipeline for VertexRenderPipeline {
             },
         ];
 
+        let vertices_slice: &[u8] = bytemuck::cast_slice(&vertices_one);
+
+        let offset = vertices_slice.len() as u64;
+
         let vertices_two = vec![
             Vertex {
                 position: [0.0, 0.5, 0.0],
@@ -95,33 +99,50 @@ impl SpecialRenderPipeline for VertexRenderPipeline {
             },
         ];
 
-        let indices_one = vec![0, 1, 2];
-        let indices_two = vec![3, 4, 5];
+        let vertices_slice_two: &[u8] = bytemuck::cast_slice(&vertices_two);
 
-        let vertices = vertices_one
-            .into_iter()
-            .chain(vertices_two)
-            .collect::<Vec<_>>();
-        let indices = indices_one
-            .into_iter()
-            .chain(indices_two)
-            .collect::<Vec<_>>();
+        let indices_one = bytemuck::cast_slice(&[0, 1, 2]);
+        let indices_two = bytemuck::cast_slice(&[3, 4, 5]);
+
+        let indices_offset = indices_one.len() as u64;
+
+        let mut vertices = Vec::new();
+        vertices.extend_from_slice(vertices_slice);
+        vertices.extend_from_slice(vertices_slice_two);
+        let mut indices = Vec::new();
+        indices.extend_from_slice(indices_one);
+        indices.extend_from_slice(indices_two);
 
         let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Vertex Buffer"),
-            contents: bytemuck::cast_slice(&vertices),
+            contents: vertices.as_slice(),
             usage: wgpu::BufferUsages::VERTEX,
         });
 
         let index_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Index Buffer"),
-            contents: bytemuck::cast_slice(&indices),
+            contents: indices.as_slice(),
             usage: wgpu::BufferUsages::INDEX,
         });
 
         render_pass.set_pipeline(render_pipeline);
-        render_pass.set_vertex_buffer(0, vertex_buffer.slice(..));
-        render_pass.set_index_buffer(index_buffer.slice(..), wgpu::IndexFormat::Uint32);
-        render_pass.draw_indexed(0..indices.len() as u32, 0, 0..1);
+        render_pass.set_vertex_buffer(0, vertex_buffer.slice(..offset));
+        render_pass.set_index_buffer(
+            index_buffer.slice(..indices_offset),
+            wgpu::IndexFormat::Uint32,
+        );
+        render_pass.draw_indexed(0..3 as u32, 0, 0..1);
+
+        render_pass.set_vertex_buffer(1, vertex_buffer.slice(offset..));
+        render_pass.set_index_buffer(
+            index_buffer.slice(indices_offset..),
+            wgpu::IndexFormat::Uint32,
+        );
+        render_pass.draw_indexed(0..3 as u32, 0, 0..1);
+
+        // render_pass.set_vertex_buffer(0, vertex_buffer.slice(..));
+        // render_pass.set_index_buffer(index_buffer.slice(..), wgpu::IndexFormat::Uint32);
+        // render_pass.draw_indexed(0..3 as u32, 0, 0..1);
+        // render_pass.draw_indexed(3..6 as u32, 0, 0..1);
     }
 }
