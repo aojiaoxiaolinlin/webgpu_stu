@@ -24,7 +24,7 @@ impl SpecialRenderPipeline for OneRenderPipeline {
                 immediate_size: 0,
             });
 
-        let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+        device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("Render Pipeline"),
             layout: Some(&render_pipeline_layout),
             vertex: VertexState {
@@ -52,9 +52,7 @@ impl SpecialRenderPipeline for OneRenderPipeline {
             }),
             multiview_mask: None,
             cache: None,
-        });
-
-        render_pipeline
+        })
     }
 
     fn draw(
