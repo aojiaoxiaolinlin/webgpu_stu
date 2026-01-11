@@ -11,3 +11,4 @@ anyhow = { workspace = true }
 image = { workspace = true }
 
 tracing = "0.1"
+rust-embed = "8"

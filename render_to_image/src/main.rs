@@ -162,7 +162,7 @@ fn main() -> anyhow::Result<()> {
     }
     let image_buffer = image::RgbaImage::from_raw(size.width, size.height, bytes)
         .expect("Retrieved texture buffer must be a valid RgbaImage");
-    let output_path = format!("render_to_image/output/test_work.png");
+    let output_path = format!("render_to_image/output/test_work_gaoss.png");
     image_buffer
         .save(output_path)
         .expect("Failed to save image");
