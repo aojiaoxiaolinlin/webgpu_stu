@@ -10,10 +10,14 @@ pub struct RenderRes<'window> {
     pub device: wgpu::Device,
     pub queue: wgpu::Queue,
     pub config: wgpu::SurfaceConfiguration,
+    pub pipeline: wgpu::RenderPipeline,
 }
 
 impl RenderRes<'_> {
-    pub async fn new(window: &Window) -> Result<Self> {
+    pub async fn new(
+        window: &Window,
+        special_render_pipeline: &impl SpecialRenderPipeline,
+    ) -> Result<Self> {
         let size = window.inner_size();
         let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
             backends: wgpu::Backends::PRIMARY,
@@ -59,11 +63,14 @@ impl RenderRes<'_> {
             alpha_mode: surface_caps.alpha_modes[0],
             view_formats: vec![],
         };
+
+        let pipeline = special_render_pipeline.special_render_pipeline(&device, config.format);
         Ok(Self {
             surface,
             device,
             queue,
             config,
+            pipeline,
         })
     }
 }
@@ -109,7 +116,7 @@ impl<T: SpecialRenderPipeline> Renderer<'_, T> {
                     label: Some("Render Encoder"),
                 });
         {
-            let render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+            let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("Render Pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &view,
@@ -123,12 +130,8 @@ impl<T: SpecialRenderPipeline> Renderer<'_, T> {
                 ..Default::default()
             });
 
-            let render_pipeline = self
-                .render
-                .special_render_pipeline(&render_res.device, render_res.config.format);
-
-            self.render
-                .draw(render_pass, &render_pipeline, &render_res.device);
+            render_pass.set_pipeline(&render_res.pipeline);
+            self.render.draw(render_pass, &render_res.device);
         }
         render_res.queue.submit(std::iter::once(encoder.finish()));
         output.present();
@@ -136,7 +139,8 @@ impl<T: SpecialRenderPipeline> Renderer<'_, T> {
     }
 
     pub(crate) fn set_window(&mut self, window: Window) {
-        self.render_res = Some(futures::executor::block_on(RenderRes::new(&window)).unwrap());
+        self.render_res =
+            Some(futures::executor::block_on(RenderRes::new(&window, &self.render)).unwrap());
         self.window = Some(window);
     }
 }

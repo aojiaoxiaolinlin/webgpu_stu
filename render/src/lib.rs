@@ -79,10 +79,5 @@ pub trait SpecialRenderPipeline {
         texture_format: wgpu::TextureFormat,
     ) -> RenderPipeline;
 
-    fn draw(
-        &self,
-        render_pass: RenderPass,
-        render_pipeline: &RenderPipeline,
-        device: &wgpu::Device,
-    );
+    fn draw(&self, render_pass: RenderPass, device: &wgpu::Device);
 }

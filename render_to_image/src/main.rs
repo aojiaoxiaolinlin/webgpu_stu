@@ -3,7 +3,7 @@ use wgpu::util::DeviceExt;
 
 mod render;
 fn main() -> anyhow::Result<()> {
-    let (device, queue) = get_device_and_queue()?;
+    let (device, queue) = futures::executor::block_on(get_device_and_queue())?;
     let (vertexes, indices) = Vertex::generate_vertexes();
 
     let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
@@ -42,7 +42,7 @@ fn main() -> anyhow::Result<()> {
     let render_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
         label: Some("Render Pipeline Layout"),
         bind_group_layouts: &[],
-        push_constant_ranges: &[],
+        immediate_size: 0,
     });
 
     let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -50,7 +50,7 @@ fn main() -> anyhow::Result<()> {
         layout: Some(&render_pipeline_layout),
         vertex: wgpu::VertexState {
             module: &shader,
-            entry_point: "vertex",
+            entry_point: Some("vertex"),
             compilation_options: Default::default(),
             buffers: &[Vertex::desc()],
         },
@@ -71,7 +71,7 @@ fn main() -> anyhow::Result<()> {
         },
         fragment: Some(wgpu::FragmentState {
             module: &shader,
-            entry_point: "fragment",
+            entry_point: Some("fragment"),
             compilation_options: Default::default(),
             targets: &[Some(wgpu::ColorTargetState {
                 format: wgpu::TextureFormat::Rgba8UnormSrgb,
@@ -79,7 +79,7 @@ fn main() -> anyhow::Result<()> {
                 write_mask: wgpu::ColorWrites::ALL,
             })],
         }),
-        multiview: None,
+        multiview_mask: None,
         cache: None,
     });
 
@@ -91,6 +91,7 @@ fn main() -> anyhow::Result<()> {
             label: Some("Render Pass"),
             color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                 view: &texture_view,
+                depth_slice: None,
                 resolve_target: None,
                 ops: wgpu::Operations {
                     load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT),
@@ -123,15 +124,15 @@ fn main() -> anyhow::Result<()> {
         label: Some("Render Encoder"),
     });
     encoder.copy_texture_to_buffer(
-        wgpu::ImageCopyTexture {
+        wgpu::TexelCopyTextureInfo {
             texture: &texture,
             mip_level: 0,
             origin: wgpu::Origin3d::ZERO,
             aspect: wgpu::TextureAspect::All,
         },
-        wgpu::ImageCopyBuffer {
+        wgpu::TexelCopyBufferInfo {
             buffer: &output_buffer,
-            layout: wgpu::ImageDataLayout {
+            layout: wgpu::TexelCopyBufferLayout {
                 offset: 0,
                 bytes_per_row: Some(padded_byte_per_row),
                 rows_per_image: None,
@@ -139,14 +140,19 @@ fn main() -> anyhow::Result<()> {
         },
         size,
     );
-    queue.submit(Some(encoder.finish()));
+    let index = queue.submit(Some(encoder.finish()));
 
     let buffer_slice = output_buffer.slice(..);
     let (sender, receiver) = std::sync::mpsc::channel();
     buffer_slice.map_async(wgpu::MapMode::Read, move |result| {
         sender.send(result).unwrap();
     });
-    device.poll(wgpu::Maintain::Wait);
+    device
+        .poll(wgpu::PollType::Wait {
+            submission_index: Some(index),
+            timeout: None,
+        })
+        .unwrap();
     receiver.recv().unwrap().unwrap();
 
     let data = buffer_slice.get_mapped_range();
@@ -156,7 +162,7 @@ fn main() -> anyhow::Result<()> {
     }
     let image_buffer = image::RgbaImage::from_raw(size.width, size.height, bytes)
         .expect("Retrieved texture buffer must be a valid RgbaImage");
-    let output_path = format!("render_to_image/output/test2.png");
+    let output_path = format!("render_to_image/output/test_work.png");
     image_buffer
         .save(output_path)
         .expect("Failed to save image");

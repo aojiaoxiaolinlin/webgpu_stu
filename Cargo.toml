@@ -1,11 +1,13 @@
 [workspace]
 members = [
     "copy_texture_to_texture",
-    "index_buffer", "render",
+    "index_buffer",
+    "render",
     "shader_transform",
     "texture",
     "transform",
     "vertex_buffer",
+    "render_to_image",
 ]
 resolver = "2"
 
@@ -18,3 +20,7 @@ futures = "0.3"
 glam = "0.29.0"
 
 bytemuck = { version = "1.22.0", features = ["derive"] }
+image = { version = "0.25", default-features = false, features = [
+    "png",
+    "jpeg",
+] }

@@ -59,12 +59,7 @@ impl SpecialRenderPipeline for VertexRenderPipeline {
         render_pipeline
     }
 
-    fn draw(
-        &self,
-        mut render_pass: wgpu::RenderPass,
-        render_pipeline: &wgpu::RenderPipeline,
-        device: &wgpu::Device,
-    ) {
+    fn draw(&self, mut render_pass: wgpu::RenderPass, device: &wgpu::Device) {
         let vertices_one = vec![
             Vertex {
                 position: [0.0, 0.5, 0.0],
@@ -125,7 +120,6 @@ impl SpecialRenderPipeline for VertexRenderPipeline {
             usage: wgpu::BufferUsages::INDEX,
         });
 
-        render_pass.set_pipeline(render_pipeline);
         render_pass.set_vertex_buffer(0, vertex_buffer.slice(..offset));
         render_pass.set_index_buffer(
             index_buffer.slice(..indices_offset),

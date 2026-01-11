@@ -55,13 +55,7 @@ impl SpecialRenderPipeline for OneRenderPipeline {
         })
     }
 
-    fn draw(
-        &self,
-        mut render_pass: wgpu::RenderPass,
-        render_pipeline: &wgpu::RenderPipeline,
-        _device: &wgpu::Device,
-    ) {
-        render_pass.set_pipeline(render_pipeline);
+    fn draw(&self, mut render_pass: wgpu::RenderPass, _device: &wgpu::Device) {
         render_pass.draw(0..3, 0..1);
     }
 }

@@ -1,5 +1,5 @@
 [package]
-name = "render_to_image"
+name = "render_backend"
 version = "0.1.0"
 edition = "2021"
 
@@ -8,6 +8,6 @@ wgpu = { workspace = true }
 bytemuck = { workspace = true }
 futures = { workspace = true }
 anyhow = { workspace = true }
+image = { workspace = true }
 
-image = "0.25.4"
 tracing = "0.1"

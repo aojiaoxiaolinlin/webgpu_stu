@@ -1,5 +1,5 @@
 use anyhow::anyhow;
-use wgpu::{BlendComponent, SurfaceError, TextureFormat, util::DeviceExt};
+use wgpu::{SurfaceError, TextureFormat, util::DeviceExt};
 use winit::window::Window;
 pub struct State<'window> {
     surface: wgpu::Surface<'window>,
@@ -25,6 +25,7 @@ impl State<'_> {
             })
             .await
             .unwrap();
+        dbg!(adapter.get_info());
         let (device, queue) = adapter
             .request_device(&wgpu::DeviceDescriptor {
                 required_features: wgpu::Features::empty(),
