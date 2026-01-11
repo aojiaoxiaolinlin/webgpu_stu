@@ -1,4 +1,5 @@
 use render::get_device_and_queue;
+use render_backend::image_utils;
 use wgpu::util::DeviceExt;
 
 mod render;
@@ -108,64 +109,8 @@ fn main() -> anyhow::Result<()> {
     }
     queue.submit(Some(encoder.finish()));
 
-    // 将纹理数据复制到CPU内存
-    let unpadded_byte_per_row = size.width as u32 * 4;
-    let align = wgpu::COPY_BYTES_PER_ROW_ALIGNMENT as u32;
-    let padded_byte_per_row_padding = (align - unpadded_byte_per_row % align) % align;
-    let padded_byte_per_row = unpadded_byte_per_row + padded_byte_per_row_padding;
-    let output_buffer = device.create_buffer(&wgpu::BufferDescriptor {
-        label: Some("Output Buffer"),
-        size: (size.width * 8 * size.height) as u64,
-        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
-        mapped_at_creation: false,
-    });
+    image_utils::copy_buffer_save_image("test_work", &texture, size, &device, &queue);
 
-    let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-        label: Some("Render Encoder"),
-    });
-    encoder.copy_texture_to_buffer(
-        wgpu::TexelCopyTextureInfo {
-            texture: &texture,
-            mip_level: 0,
-            origin: wgpu::Origin3d::ZERO,
-            aspect: wgpu::TextureAspect::All,
-        },
-        wgpu::TexelCopyBufferInfo {
-            buffer: &output_buffer,
-            layout: wgpu::TexelCopyBufferLayout {
-                offset: 0,
-                bytes_per_row: Some(padded_byte_per_row),
-                rows_per_image: None,
-            },
-        },
-        size,
-    );
-    let index = queue.submit(Some(encoder.finish()));
-
-    let buffer_slice = output_buffer.slice(..);
-    let (sender, receiver) = std::sync::mpsc::channel();
-    buffer_slice.map_async(wgpu::MapMode::Read, move |result| {
-        sender.send(result).unwrap();
-    });
-    device
-        .poll(wgpu::PollType::Wait {
-            submission_index: Some(index),
-            timeout: None,
-        })
-        .unwrap();
-    receiver.recv().unwrap().unwrap();
-
-    let data = buffer_slice.get_mapped_range();
-    let mut bytes = Vec::with_capacity(size.height as usize);
-    for row in data.chunks_exact(padded_byte_per_row as usize) {
-        bytes.extend_from_slice(&row[..unpadded_byte_per_row as usize]);
-    }
-    let image_buffer = image::RgbaImage::from_raw(size.width, size.height, bytes)
-        .expect("Retrieved texture buffer must be a valid RgbaImage");
-    let output_path = format!("render_to_image/output/test_work_gaoss.png");
-    image_buffer
-        .save(output_path)
-        .expect("Failed to save image");
     Ok(())
 }
 
