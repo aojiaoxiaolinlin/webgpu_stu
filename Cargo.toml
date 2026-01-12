@@ -7,7 +7,7 @@ members = [
     "texture",
     "transform",
     "vertex_buffer",
-    "render_to_image",
+    "render_to_image", "compute_particle",
 ]
 resolver = "2"
 

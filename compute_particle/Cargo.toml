@@ -1,0 +1,12 @@
+[package]
+name = "compute_particle"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+winit = { workspace = true }
+wgpu = { workspace = true }
+bytemuck = { workspace = true }
+futures = { workspace = true }
+anyhow = { workspace = true }
+glam = { workspace = true, features = ["bytemuck"] }
