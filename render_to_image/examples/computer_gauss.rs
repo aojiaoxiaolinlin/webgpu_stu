@@ -102,7 +102,7 @@ fn main() -> anyhow::Result<()> {
 
     let compute_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
         label: Some("compute_pipeline_layout"),
-        bind_group_layouts: &[&texture_bind_group_layout],
+        bind_group_layouts: &[Some(&texture_bind_group_layout)],
         immediate_size: 0,
     });
 

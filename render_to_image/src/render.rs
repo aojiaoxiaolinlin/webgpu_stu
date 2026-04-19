@@ -1,39 +1,17 @@
 use anyhow::anyhow;
 use tracing::info;
 
-async fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
-    for backend in wgpu::Backends::all() {
-        if let Some(instance) = try_wgpu_backend(backend).await {
-            return Ok((instance, backend));
-        }
-    }
-    Err(anyhow!("没有找到可用渲染后端"))
-}
-
-async fn try_wgpu_backend(backends: wgpu::Backends) -> Option<wgpu::Instance> {
-    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
-        backends,
-        flags: wgpu::InstanceFlags::default().with_env(),
-        ..Default::default()
-    });
-    if instance.enumerate_adapters(backends).await.is_empty() {
-        None
-    } else {
-        Some(instance)
-    }
+fn create_wgpu_instance() -> wgpu::Instance {
+    wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle())
 }
 
 pub async fn get_device_and_queue() -> anyhow::Result<(wgpu::Device, wgpu::Queue)> {
-    let (instance, backend) = create_wgpu_instance().await?;
+    let instance = create_wgpu_instance();
 
-    let (adapter, device, queue) = request_adapter_and_device(
-        backend,
-        &instance,
-        None,
-        wgpu::PowerPreference::HighPerformance,
-    )
-    .await
-    .map_err(|e| anyhow!(e.to_string()))?;
+    let (adapter, device, queue) =
+        request_adapter_and_device(&instance, None, wgpu::PowerPreference::HighPerformance)
+            .await
+            .map_err(|e| anyhow!(e.to_string()))?;
 
     let adapter_info = adapter.get_info();
     info!("适配器信息：{:?}", adapter_info);
@@ -43,7 +21,6 @@ pub async fn get_device_and_queue() -> anyhow::Result<(wgpu::Device, wgpu::Queue
 type Error = Box<dyn std::error::Error>;
 
 pub async fn request_adapter_and_device(
-    backend: wgpu::Backends,
     instance: &wgpu::Instance,
     surface: Option<&wgpu::Surface<'static>>,
     power_preference: wgpu::PowerPreference,
@@ -55,14 +32,7 @@ pub async fn request_adapter_and_device(
             force_fallback_adapter: false,
         })
         .await
-        .map_err(|_| {
-            let names = get_backend_names(backend);
-            if names.is_empty() {
-                "没有找到适配器".to_string()
-            } else {
-                format!("没有找到适配器，可用适配器：{}", names.join(", "))
-            }
-        })?;
+        .map_err(|_| String::from("没有找到适配器"))?;
 
     let mut features = Default::default();
 
@@ -89,26 +59,4 @@ pub async fn request_adapter_and_device(
         })
         .await?;
     Ok((adapter, device, queue))
-}
-
-pub fn get_backend_names(backends: wgpu::Backends) -> Vec<&'static str> {
-    let mut names = Vec::new();
-
-    if backends.contains(wgpu::Backends::VULKAN) {
-        names.push("Vulkan");
-    }
-    if backends.contains(wgpu::Backends::DX12) {
-        names.push("DirectX 12");
-    }
-    if backends.contains(wgpu::Backends::METAL) {
-        names.push("Metal");
-    }
-    if backends.contains(wgpu::Backends::GL) {
-        names.push("Open GL");
-    }
-    if backends.contains(wgpu::Backends::BROWSER_WEBGPU) {
-        names.push("Web GPU");
-    }
-
-    names
 }

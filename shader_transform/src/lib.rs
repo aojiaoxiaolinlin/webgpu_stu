@@ -1,6 +1,4 @@
-use anyhow::anyhow;
-use wgpu::SurfaceError;
-use winit::window::Window;
+use winit::{event_loop::OwnedDisplayHandle, window::Window};
 pub struct State<'window> {
     surface: wgpu::Surface<'window>,
     device: wgpu::Device,
@@ -10,8 +8,8 @@ pub struct State<'window> {
 }
 
 impl State<'_> {
-    pub async fn new(window: &Window) -> anyhow::Result<Self> {
-        let (instance, _backend) = create_wgpu_instance().await?;
+    pub async fn new(window: &Window, display_handle: OwnedDisplayHandle) -> anyhow::Result<Self> {
+        let instance = create_wgpu_instance(display_handle);
         let surface = unsafe {
             instance.create_surface_unsafe(wgpu::SurfaceTargetUnsafe::from_window(&window)?)
         }?;
@@ -103,8 +101,14 @@ impl State<'_> {
             render_pipeline,
         })
     }
-    pub fn render(&mut self) -> Result<(), SurfaceError> {
-        let output = self.surface.get_current_texture()?;
+    pub fn render(&mut self) {
+        let output = match self.surface.get_current_texture() {
+            wgpu::CurrentSurfaceTexture::Success(surface_texture) => surface_texture,
+            _ => {
+                eprintln!("Surface Fail");
+                return;
+            }
+        };
         let view = output
             .texture
             .create_view(&wgpu::TextureViewDescriptor::default());
@@ -138,7 +142,6 @@ impl State<'_> {
         }
         self.queue.submit(std::iter::once(encoder.finish()));
         output.present();
-        Ok(())
     }
     pub fn update(&mut self) {}
     pub fn resize(&mut self, physical_size: winit::dpi::PhysicalSize<u32>) {
@@ -150,23 +153,8 @@ impl State<'_> {
     }
 }
 
-async fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
-    for backend in wgpu::Backends::all() {
-        if let Some(instance) = try_wgpu_backend(backend).await {
-            return Ok((instance, backend));
-        }
-    }
-    Err(anyhow!("没有找到可用渲染后端"))
-}
-async fn try_wgpu_backend(backend: wgpu::Backends) -> Option<wgpu::Instance> {
-    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
-        backends: backend,
-        flags: wgpu::InstanceFlags::default().with_env(),
-        ..Default::default()
-    });
-    if instance.enumerate_adapters(backend).await.is_empty() {
-        None
-    } else {
-        Some(instance)
-    }
+fn create_wgpu_instance(display_handle: OwnedDisplayHandle) -> wgpu::Instance {
+    wgpu::Instance::new(wgpu::InstanceDescriptor::new_with_display_handle(Box::new(
+        display_handle,
+    )))
 }

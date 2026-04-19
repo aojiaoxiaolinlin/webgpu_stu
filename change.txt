@@ -1,0 +1,1911 @@
+diff --git a/Cargo.lock b/Cargo.lock
+index ed811b1..d33f0db 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -126,18 +126,18 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
+ 
+ [[package]]
+ name = "bit-set"
+-version = "0.8.0"
++version = "0.9.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "08807e080ed7f9d5433fa9b275196cfc35414f66a0c79d864dc51a0d825231a3"
++checksum = "34ddef2995421ab6a5c779542c81ee77c115206f4ad9d5a8e05f4ff49716a3dd"
+ dependencies = [
+  "bit-vec",
+ ]
+ 
+ [[package]]
+ name = "bit-vec"
+-version = "0.8.0"
++version = "0.9.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5e764a1d40d510daf35e07be9eb06e75770908c27d411ee6c92109c9840eaaf7"
++checksum = "b71798fca2c1fe1086445a7258a4bc81e6e49dcd24c8d0dd9a1e57395b603f51"
+ 
+ [[package]]
+ name = "bitflags"
+@@ -151,12 +151,6 @@ version = "2.10.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "812e12b5285cc515a9c72a5c1d3b6d46a19dac5acfef5265968c166106e31dd3"
+ 
+-[[package]]
+-name = "block"
+-version = "0.1.6"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0d8c1fef690941d3e7788d328517591fecc684c084084702d6ff1641e993699a"
+-
+ [[package]]
+ name = "block-buffer"
+ version = "0.10.4"
+@@ -172,7 +166,16 @@ version = "0.5.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "2c132eebf10f5cad5289222520a4a058514204aed6d791f1cf4fe8088b82d15f"
+ dependencies = [
+- "objc2",
++ "objc2 0.5.2",
++]
++
++[[package]]
++name = "block2"
++version = "0.6.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "cdeb9d870516001442e364c5220d3574d2da8dc765554b4a617230d33fa58ef5"
++dependencies = [
++ "objc2 0.6.4",
+ ]
+ 
+ [[package]]
+@@ -271,9 +274,9 @@ checksum = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
+ 
+ [[package]]
+ name = "codespan-reporting"
+-version = "0.12.0"
++version = "0.13.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fe6d2e5af09e8c8ad56c969f2157a3d4238cebc7c55f0a517728c38f7b200f81"
++checksum = "af491d569909a7e4dee0ad7db7f5341fef5c614d5b8ec8cf765732aba3cff681"
+ dependencies = [
+  "serde",
+  "termcolor",
+@@ -333,16 +336,6 @@ dependencies = [
+  "libc",
+ ]
+ 
+-[[package]]
+-name = "core-foundation"
+-version = "0.10.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b2a6cd9ae233e7f62ba4e9353e81a88df7fc8a5987b8d445b4d90c879bd156f6"
+-dependencies = [
+- "core-foundation-sys",
+- "libc",
+-]
+-
+ [[package]]
+ name = "core-foundation-sys"
+ version = "0.8.7"
+@@ -356,8 +349,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c07782be35f9e1140080c6b96f0d44b739e2278479f64e02fdab4e32dfd8b081"
+ dependencies = [
+  "bitflags 1.3.2",
+- "core-foundation 0.9.4",
+- "core-graphics-types 0.1.3",
++ "core-foundation",
++ "core-graphics-types",
+  "foreign-types",
+  "libc",
+ ]
+@@ -369,18 +362,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "45390e6114f68f718cc7a830514a96f903cccd70d02a8f6d9f643ac4ba45afaf"
+ dependencies = [
+  "bitflags 1.3.2",
+- "core-foundation 0.9.4",
+- "libc",
+-]
+-
+-[[package]]
+-name = "core-graphics-types"
+-version = "0.2.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3d44a101f213f6c4cdc1853d4b78aef6db6bdfa3468798cc1d9912f4735013eb"
+-dependencies = [
+- "bitflags 2.10.0",
+- "core-foundation 0.10.1",
++ "core-foundation",
+  "libc",
+ ]
+ 
+@@ -446,6 +428,16 @@ version = "0.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "bd0c93bb4b0c6d9b77f4435b0ae98c24d17f1c45b2ff844c6151a07256ca923b"
+ 
++[[package]]
++name = "dispatch2"
++version = "0.3.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "1e0e367e4e7da84520dedcac1901e4da967309406d1e51017ae1abfb97adbd38"
++dependencies = [
++ "bitflags 2.10.0",
++ "objc2 0.6.4",
++]
++
+ [[package]]
+ name = "dlib"
+ version = "0.5.2"
+@@ -699,9 +691,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "glow"
+-version = "0.16.0"
++version = "0.17.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c5e5ea60d70410161c8bf5da3fdfeaa1c72ed2c15f8bbb9d19fe3a4fad085f08"
++checksum = "29038e1c483364cc6bb3cf78feee1816002e127c331a1eec55a4d202b9e1adb5"
+ dependencies = [
+  "js-sys",
+  "slotmap",
+@@ -866,10 +858,12 @@ dependencies = [
+ 
+ [[package]]
+ name = "js-sys"
+-version = "0.3.83"
++version = "0.3.95"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "464a3709c7f55f1f721e5389aa6ea4e3bc6aba669353300af094b29ffbdde1d8"
++checksum = "2964e92d1d9dc3364cae4d718d93f227e3abb088e747d92e0395bfdedf1c12ca"
+ dependencies = [
++ "cfg-if",
++ "futures-util",
+  "once_cell",
+  "wasm-bindgen",
+ ]
+@@ -957,15 +951,6 @@ version = "0.4.29"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "5e5032e24019045c762d3c0f28f5b6b8bbf38563a65908389bf7978758920897"
+ 
+-[[package]]
+-name = "malloc_buf"
+-version = "0.0.6"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "62bb907fe88d54d8d9ce32a3cceab4218ed2f6b7d35617cafe9adf84e43919cb"
+-dependencies = [
+- "libc",
+-]
+-
+ [[package]]
+ name = "memchr"
+ version = "2.7.6"
+@@ -981,21 +966,6 @@ dependencies = [
+  "libc",
+ ]
+ 
+-[[package]]
+-name = "metal"
+-version = "0.33.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c7047791b5bc903b8cd963014b355f71dc9864a9a0b727057676c1dcae5cbc15"
+-dependencies = [
+- "bitflags 2.10.0",
+- "block",
+- "core-graphics-types 0.2.0",
+- "foreign-types",
+- "log",
+- "objc",
+- "paste",
+-]
+-
+ [[package]]
+ name = "miniz_oxide"
+ version = "0.8.9"
+@@ -1018,9 +988,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "naga"
+-version = "28.0.0"
++version = "29.0.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "618f667225063219ddfc61251087db8a9aec3c3f0950c916b614e403486f1135"
++checksum = "aa2630921705b9b01dcdd0b6864b9562ca3c1951eecd0f0c4f5f04f61e412647"
+ dependencies = [
+  "arrayvec",
+  "bit-set",
+@@ -1104,15 +1074,6 @@ dependencies = [
+  "syn",
+ ]
+ 
+-[[package]]
+-name = "objc"
+-version = "0.2.7"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "915b1b472bc21c53464d6c8461c9d3af805ba1ef837e1cac254428f4a77177b1"
+-dependencies = [
+- "malloc_buf",
+-]
+-
+ [[package]]
+ name = "objc-sys"
+ version = "0.3.5"
+@@ -1129,6 +1090,15 @@ dependencies = [
+  "objc2-encode",
+ ]
+ 
++[[package]]
++name = "objc2"
++version = "0.6.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "3a12a8ed07aefc768292f076dc3ac8c48f3781c8f2d5851dd3d98950e8c5a89f"
++dependencies = [
++ "objc2-encode",
++]
++
+ [[package]]
+ name = "objc2-app-kit"
+ version = "0.2.2"
+@@ -1136,13 +1106,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e4e89ad9e3d7d297152b17d39ed92cd50ca8063a89a9fa569046d41568891eff"
+ dependencies = [
+  "bitflags 2.10.0",
+- "block2",
++ "block2 0.5.1",
+  "libc",
+- "objc2",
++ "objc2 0.5.2",
+  "objc2-core-data",
+  "objc2-core-image",
+- "objc2-foundation",
+- "objc2-quartz-core",
++ "objc2-foundation 0.2.2",
++ "objc2-quartz-core 0.2.2",
+ ]
+ 
+ [[package]]
+@@ -1152,10 +1122,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "74dd3b56391c7a0596a295029734d3c1c5e7e510a4cb30245f8221ccea96b009"
+ dependencies = [
+  "bitflags 2.10.0",
+- "block2",
+- "objc2",
++ "block2 0.5.1",
++ "objc2 0.5.2",
+  "objc2-core-location",
+- "objc2-foundation",
++ "objc2-foundation 0.2.2",
+ ]
+ 
+ [[package]]
+@@ -1164,9 +1134,9 @@ version = "0.2.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "a5ff520e9c33812fd374d8deecef01d4a840e7b41862d849513de77e44aa4889"
+ dependencies = [
+- "block2",
+- "objc2",
+- "objc2-foundation",
++ "block2 0.5.1",
++ "objc2 0.5.2",
++ "objc2-foundation 0.2.2",
+ ]
+ 
+ [[package]]
+@@ -1176,9 +1146,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "617fbf49e071c178c0b24c080767db52958f716d9eabdf0890523aeae54773ef"
+ dependencies = [
+  "bitflags 2.10.0",
+- "block2",
+- "objc2",
+- "objc2-foundation",
++ "block2 0.5.1",
++ "objc2 0.5.2",
++ "objc2-foundation 0.2.2",
++]
++
++[[package]]
++name = "objc2-core-foundation"
++version = "0.3.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "2a180dd8642fa45cdb7dd721cd4c11b1cadd4929ce112ebd8b9f5803cc79d536"
++dependencies = [
++ "bitflags 2.10.0",
++ "dispatch2",
++ "objc2 0.6.4",
+ ]
+ 
+ [[package]]
+@@ -1187,10 +1168,10 @@ version = "0.2.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "55260963a527c99f1819c4f8e3b47fe04f9650694ef348ffd2227e8196d34c80"
+ dependencies = [
+- "block2",
+- "objc2",
+- "objc2-foundation",
+- "objc2-metal",
++ "block2 0.5.1",
++ "objc2 0.5.2",
++ "objc2-foundation 0.2.2",
++ "objc2-metal 0.2.2",
+ ]
+ 
+ [[package]]
+@@ -1199,10 +1180,10 @@ version = "0.2.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "000cfee34e683244f284252ee206a27953279d370e309649dc3ee317b37e5781"
+ dependencies = [
+- "block2",
+- "objc2",
++ "block2 0.5.1",
++ "objc2 0.5.2",
+  "objc2-contacts",
+- "objc2-foundation",
++ "objc2-foundation 0.2.2",
+ ]
+ 
+ [[package]]
+@@ -1218,10 +1199,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "0ee638a5da3799329310ad4cfa62fbf045d5f56e3ef5ba4149e7452dcf89d5a8"
+ dependencies = [
+  "bitflags 2.10.0",
+- "block2",
++ "block2 0.5.1",
+  "dispatch",
+  "libc",
+- "objc2",
++ "objc2 0.5.2",
++]
++
++[[package]]
++name = "objc2-foundation"
++version = "0.3.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "e3e0adef53c21f888deb4fa59fc59f7eb17404926ee8a6f59f5df0fd7f9f3272"
++dependencies = [
++ "bitflags 2.10.0",
++ "objc2 0.6.4",
++ "objc2-core-foundation",
+ ]
+ 
+ [[package]]
+@@ -1230,10 +1222,10 @@ version = "0.2.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "a1a1ae721c5e35be65f01a03b6d2ac13a54cb4fa70d8a5da293d7b0020261398"
+ dependencies = [
+- "block2",
+- "objc2",
++ "block2 0.5.1",
++ "objc2 0.5.2",
+  "objc2-app-kit",
+- "objc2-foundation",
++ "objc2-foundation 0.2.2",
+ ]
+ 
+ [[package]]
+@@ -1243,9 +1235,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "dd0cba1276f6023976a406a14ffa85e1fdd19df6b0f737b063b95f6c8c7aadd6"
+ dependencies = [
+  "bitflags 2.10.0",
+- "block2",
+- "objc2",
+- "objc2-foundation",
++ "block2 0.5.1",
++ "objc2 0.5.2",
++ "objc2-foundation 0.2.2",
++]
++
++[[package]]
++name = "objc2-metal"
++version = "0.3.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "a0125f776a10d00af4152d74616409f0d4a2053a6f57fa5b7d6aa2854ac04794"
++dependencies = [
++ "bitflags 2.10.0",
++ "block2 0.6.2",
++ "objc2 0.6.4",
++ "objc2-foundation 0.3.2",
+ ]
+ 
+ [[package]]
+@@ -1255,10 +1259,23 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e42bee7bff906b14b167da2bac5efe6b6a07e6f7c0a21a7308d40c960242dc7a"
+ dependencies = [
+  "bitflags 2.10.0",
+- "block2",
+- "objc2",
+- "objc2-foundation",
+- "objc2-metal",
++ "block2 0.5.1",
++ "objc2 0.5.2",
++ "objc2-foundation 0.2.2",
++ "objc2-metal 0.2.2",
++]
++
++[[package]]
++name = "objc2-quartz-core"
++version = "0.3.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "96c1358452b371bf9f104e21ec536d37a650eb10f7ee379fff67d2e08d537f1f"
++dependencies = [
++ "bitflags 2.10.0",
++ "objc2 0.6.4",
++ "objc2-core-foundation",
++ "objc2-foundation 0.3.2",
++ "objc2-metal 0.3.2",
+ ]
+ 
+ [[package]]
+@@ -1267,8 +1284,8 @@ version = "0.2.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "0a684efe3dec1b305badae1a28f6555f6ddd3bb2c2267896782858d5a78404dc"
+ dependencies = [
+- "objc2",
+- "objc2-foundation",
++ "objc2 0.5.2",
++ "objc2-foundation 0.2.2",
+ ]
+ 
+ [[package]]
+@@ -1278,15 +1295,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b8bb46798b20cd6b91cbd113524c490f1686f4c4e8f49502431415f3512e2b6f"
+ dependencies = [
+  "bitflags 2.10.0",
+- "block2",
+- "objc2",
++ "block2 0.5.1",
++ "objc2 0.5.2",
+  "objc2-cloud-kit",
+  "objc2-core-data",
+  "objc2-core-image",
+  "objc2-core-location",
+- "objc2-foundation",
++ "objc2-foundation 0.2.2",
+  "objc2-link-presentation",
+- "objc2-quartz-core",
++ "objc2-quartz-core 0.2.2",
+  "objc2-symbols",
+  "objc2-uniform-type-identifiers",
+  "objc2-user-notifications",
+@@ -1298,9 +1315,9 @@ version = "0.2.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "44fa5f9748dbfe1ca6c0b79ad20725a11eca7c2218bceb4b005cb1be26273bfe"
+ dependencies = [
+- "block2",
+- "objc2",
+- "objc2-foundation",
++ "block2 0.5.1",
++ "objc2 0.5.2",
++ "objc2-foundation 0.2.2",
+ ]
+ 
+ [[package]]
+@@ -1310,10 +1327,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "76cfcbf642358e8689af64cee815d139339f3ed8ad05103ed5eaf73db8d84cb3"
+ dependencies = [
+  "bitflags 2.10.0",
+- "block2",
+- "objc2",
++ "block2 0.5.1",
++ "objc2 0.5.2",
+  "objc2-core-location",
+- "objc2-foundation",
++ "objc2-foundation 0.2.2",
+ ]
+ 
+ [[package]]
+@@ -1373,12 +1390,6 @@ dependencies = [
+  "windows-link",
+ ]
+ 
+-[[package]]
+-name = "paste"
+-version = "1.0.15"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
+-
+ [[package]]
+ name = "percent-encoding"
+ version = "2.3.2"
+@@ -1540,6 +1551,18 @@ version = "0.6.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "20675572f6f24e9e76ef639bc5552774ed45f1c30e2951e1e99c59888861c539"
+ 
++[[package]]
++name = "raw-window-metal"
++version = "1.1.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "40d213455a5f1dc59214213c7330e074ddf8114c9a42411eb890c767357ce135"
++dependencies = [
++ "objc2 0.6.4",
++ "objc2-core-foundation",
++ "objc2-foundation 0.3.2",
++ "objc2-quartz-core 0.3.2",
++]
++
+ [[package]]
+ name = "redox_syscall"
+ version = "0.4.1"
+@@ -1824,9 +1847,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "spirv"
+-version = "0.3.0+sdk-1.3.268.0"
++version = "0.4.0+sdk-1.4.341.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "eda41003dc44290527a59b13432d4a0379379fa074b70174882adfbdfd917844"
++checksum = "d9571ea910ebd84c86af4b3ed27f9dbdc6ad06f17c5f96146b2b671e2976744f"
+ dependencies = [
+  "bitflags 2.10.0",
+ ]
+@@ -2081,9 +2104,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "wasm-bindgen"
+-version = "0.2.106"
++version = "0.2.118"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0d759f433fa64a2d763d1340820e46e111a7a5ab75f993d1852d70b03dbb80fd"
++checksum = "0bf938a0bacb0469e83c1e148908bd7d5a6010354cf4fb73279b7447422e3a89"
+ dependencies = [
+  "cfg-if",
+  "once_cell",
+@@ -2094,22 +2117,19 @@ dependencies = [
+ 
+ [[package]]
+ name = "wasm-bindgen-futures"
+-version = "0.4.56"
++version = "0.4.68"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "836d9622d604feee9e5de25ac10e3ea5f2d65b41eac0d9ce72eb5deae707ce7c"
++checksum = "f371d383f2fb139252e0bfac3b81b265689bf45b6874af544ffa4c975ac1ebf8"
+ dependencies = [
+- "cfg-if",
+  "js-sys",
+- "once_cell",
+  "wasm-bindgen",
+- "web-sys",
+ ]
+ 
+ [[package]]
+ name = "wasm-bindgen-macro"
+-version = "0.2.106"
++version = "0.2.118"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "48cb0d2638f8baedbc542ed444afc0644a29166f1595371af4fecf8ce1e7eeb3"
++checksum = "eeff24f84126c0ec2db7a449f0c2ec963c6a49efe0698c4242929da037ca28ed"
+ dependencies = [
+  "quote",
+  "wasm-bindgen-macro-support",
+@@ -2117,9 +2137,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "wasm-bindgen-macro-support"
+-version = "0.2.106"
++version = "0.2.118"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cefb59d5cd5f92d9dcf80e4683949f15ca4b511f4ac0a6e14d4e1ac60c6ecd40"
++checksum = "9d08065faf983b2b80a79fd87d8254c409281cf7de75fc4b773019824196c904"
+ dependencies = [
+  "bumpalo",
+  "proc-macro2",
+@@ -2130,9 +2150,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "wasm-bindgen-shared"
+-version = "0.2.106"
++version = "0.2.118"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cbc538057e648b67f72a982e708d485b2efa771e1ac05fec311f9f63e5800db4"
++checksum = "5fd04d9e306f1907bd13c6361b5c6bfc7b3b3c095ed3f8a9246390f8dbdee129"
+ dependencies = [
+  "unicode-ident",
+ ]
+@@ -2248,9 +2268,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "web-sys"
+-version = "0.3.83"
++version = "0.3.95"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9b32828d774c412041098d182a8b38b16ea816958e07cf40eec2bc080ae137ac"
++checksum = "4f2dfbb17949fa2088e5d39408c48368947b86f7834484e87b73de55bc14d97d"
+ dependencies = [
+  "js-sys",
+  "wasm-bindgen",
+@@ -2268,9 +2288,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "wgpu"
+-version = "28.0.0"
++version = "29.0.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f9cb534d5ffd109c7d1135f34cdae29e60eab94855a625dcfe1705f8bc7ad79f"
++checksum = "72c239a9a747bbd379590985bac952c2e53cb19873f7072b3370c6a6a8e06837"
+ dependencies = [
+  "arrayvec",
+  "bitflags 2.10.0",
+@@ -2298,9 +2318,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "wgpu-core"
+-version = "28.0.0"
++version = "29.0.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8bb4c8b5db5f00e56f1f08869d870a0dff7c8bc7ebc01091fec140b0cf0211a9"
++checksum = "1e80ac6cf1895df6342f87d975162108f9d98772a0d74bc404ab7304ac29469e"
+ dependencies = [
+  "arrayvec",
+  "bit-set",
+@@ -2325,52 +2345,52 @@ dependencies = [
+  "wgpu-core-deps-emscripten",
+  "wgpu-core-deps-windows-linux-android",
+  "wgpu-hal",
++ "wgpu-naga-bridge",
+  "wgpu-types",
+ ]
+ 
+ [[package]]
+ name = "wgpu-core-deps-apple"
+-version = "28.0.0"
++version = "29.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "87b7b696b918f337c486bf93142454080a32a37832ba8a31e4f48221890047da"
++checksum = "43acd053312501689cd92a01a9638d37f3e41a5fd9534875efa8917ee2d11ac0"
+ dependencies = [
+  "wgpu-hal",
+ ]
+ 
+ [[package]]
+ name = "wgpu-core-deps-emscripten"
+-version = "28.0.0"
++version = "29.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "34b251c331f84feac147de3c4aa3aa45112622a95dd7ee1b74384fa0458dbd79"
++checksum = "ef043bf135cc68b6f667c55ff4e345ce2b5924d75bad36a47921b0287ca4b24a"
+ dependencies = [
+  "wgpu-hal",
+ ]
+ 
+ [[package]]
+ name = "wgpu-core-deps-windows-linux-android"
+-version = "28.0.0"
++version = "29.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "68ca976e72b2c9964eb243e281f6ce7f14a514e409920920dcda12ae40febaae"
++checksum = "725d5c006a8c02967b6d93ef04f6537ec4593313e330cfe86d9d3f946eb90f28"
+ dependencies = [
+  "wgpu-hal",
+ ]
+ 
+ [[package]]
+ name = "wgpu-hal"
+-version = "28.0.0"
++version = "29.0.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "293080d77fdd14d6b08a67c5487dfddbf874534bb7921526db56a7b75d7e3bef"
++checksum = "89a47aef47636562f3937285af4c44b4b5b404b46577471411cc5313a921da7e"
+ dependencies = [
+  "android_system_properties",
+  "arrayvec",
+  "ash",
+  "bit-set",
+  "bitflags 2.10.0",
+- "block",
++ "block2 0.6.2",
+  "bytemuck",
+  "cfg-if",
+  "cfg_aliases",
+- "core-graphics-types 0.2.0",
+  "glow",
+  "glutin_wgl_sys",
+  "gpu-allocator",
+@@ -2381,10 +2401,13 @@ dependencies = [
+  "libc",
+  "libloading",
+  "log",
+- "metal",
+  "naga",
+  "ndk-sys",
+- "objc",
++ "objc2 0.6.4",
++ "objc2-core-foundation",
++ "objc2-foundation 0.3.2",
++ "objc2-metal 0.3.2",
++ "objc2-quartz-core 0.3.2",
+  "once_cell",
+  "ordered-float",
+  "parking_lot",
+@@ -2393,26 +2416,40 @@ dependencies = [
+  "profiling",
+  "range-alloc",
+  "raw-window-handle",
++ "raw-window-metal",
+  "renderdoc-sys",
+  "smallvec",
+  "thiserror 2.0.17",
+  "wasm-bindgen",
++ "wayland-sys",
+  "web-sys",
++ "wgpu-naga-bridge",
+  "wgpu-types",
+  "windows",
+  "windows-core",
+ ]
+ 
++[[package]]
++name = "wgpu-naga-bridge"
++version = "29.0.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "7b4684f4410da0cf95a4cb63bb5edaac022461dedb6adf0b64d0d9b5f6890d51"
++dependencies = [
++ "naga",
++ "wgpu-types",
++]
++
+ [[package]]
+ name = "wgpu-types"
+-version = "28.0.0"
++version = "29.0.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e18308757e594ed2cd27dddbb16a139c42a683819d32a2e0b1b0167552f5840c"
++checksum = "ec2675540fb1a5cfa5ef122d3d5f390e2c75711a0b946410f2d6ac3a0f77d1f6"
+ dependencies = [
+  "bitflags 2.10.0",
+  "bytemuck",
+  "js-sys",
+  "log",
++ "raw-window-handle",
+  "web-sys",
+ ]
+ 
+@@ -2702,12 +2739,12 @@ dependencies = [
+  "android-activity",
+  "atomic-waker",
+  "bitflags 2.10.0",
+- "block2",
++ "block2 0.5.1",
+  "bytemuck",
+  "calloop",
+  "cfg_aliases",
+  "concurrent-queue",
+- "core-foundation 0.9.4",
++ "core-foundation",
+  "core-graphics",
+  "cursor-icon",
+  "dpi",
+@@ -2715,9 +2752,9 @@ dependencies = [
+  "libc",
+  "memmap2",
+  "ndk",
+- "objc2",
++ "objc2 0.5.2",
+  "objc2-app-kit",
+- "objc2-foundation",
++ "objc2-foundation 0.2.2",
+  "objc2-ui-kit",
+  "orbclient",
+  "percent-encoding",
+diff --git a/Cargo.toml b/Cargo.toml
+index b24c480..91f6822 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -7,12 +7,13 @@ members = [
+     "texture",
+     "transform",
+     "vertex_buffer",
+-    "render_to_image", "compute_particle",
++    "render_to_image",
++    "compute_particle",
+ ]
+ resolver = "2"
+ 
+ [workspace.dependencies]
+-wgpu = "28"
++wgpu = "29"
+ winit = "0.30"
+ anyhow = "1.0"
+ tokio = "1"
+diff --git a/compute_particle/src/app.rs b/compute_particle/src/app.rs
+index 2edf3c7..6c60f2f 100644
+--- a/compute_particle/src/app.rs
++++ b/compute_particle/src/app.rs
+@@ -32,7 +32,9 @@ impl ApplicationHandler for App<'_> {
+                 .unwrap(),
+         );
+         if let Some(window) = &self.window {
+-            self.state = Some(futures::executor::block_on(State::new(window)).unwrap());
++            let display_handle = event_loop.owned_display_handle();
++            self.state =
++                Some(futures::executor::block_on(State::new(window, display_handle)).unwrap());
+         }
+     }
+ 
+@@ -52,15 +54,7 @@ impl ApplicationHandler for App<'_> {
+                     let delta_time = now - self.last_render_time;
+                     state.update(delta_time);
+                     self.last_render_time = now;
+-                    match state.render() {
+-                        Ok(_) => {}
+-                        Err(wgpu::SurfaceError::Lost) => {
+-                            dbg!("surface lost");
+-                        }
+-                        Err(e) => {
+-                            eprintln!("{:?}", e);
+-                        }
+-                    }
++                    state.render();
+                 }
+             }
+             WindowEvent::Resized(physical_size) => {
+diff --git a/compute_particle/src/lib.rs b/compute_particle/src/lib.rs
+index 57e61d5..f5f27ae 100644
+--- a/compute_particle/src/lib.rs
++++ b/compute_particle/src/lib.rs
+@@ -1,9 +1,8 @@
+ use std::time::Duration;
+ 
+-use anyhow::anyhow;
+ use glam::{Vec2, Vec4};
+-use wgpu::{SurfaceError, TextureFormat};
+-use winit::window::Window;
++use wgpu::TextureFormat;
++use winit::{event_loop::OwnedDisplayHandle, window::Window};
+ 
+ const PARTICLE_COUNT: u32 = 1024;
+ 
+@@ -20,8 +19,8 @@ pub struct State<'window> {
+ }
+ 
+ impl State<'_> {
+-    pub async fn new(window: &Window) -> anyhow::Result<Self> {
+-        let (instance, _backend) = create_wgpu_instance().await?;
++    pub async fn new(window: &Window, display_handle: OwnedDisplayHandle) -> anyhow::Result<Self> {
++        let instance = create_wgpu_instance(display_handle).await;
+         let surface = unsafe {
+             instance.create_surface_unsafe(wgpu::SurfaceTargetUnsafe::from_window(&window)?)
+         }?;
+@@ -98,7 +97,7 @@ impl State<'_> {
+         let compute_pipeline_layout =
+             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                 label: Some("Compute Pipeline Layout"),
+-                bind_group_layouts: &[&compute_bind_group_layout],
++                bind_group_layouts: &[Some(&compute_bind_group_layout)],
+                 immediate_size: 0,
+             });
+ 
+@@ -120,7 +119,7 @@ impl State<'_> {
+         let render_pipeline_layout =
+             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                 label: Some("Render Pipeline Layout"),
+-                bind_group_layouts: &[&render_bind_group_layout],
++                bind_group_layouts: &[Some(&render_bind_group_layout)],
+                 immediate_size: 0,
+             });
+ 
+@@ -258,8 +257,14 @@ impl State<'_> {
+             time_buffer,
+         })
+     }
+-    pub fn render(&mut self) -> Result<(), SurfaceError> {
+-        let output = self.surface.get_current_texture()?;
++    pub fn render(&mut self) {
++        let output = match self.surface.get_current_texture() {
++            wgpu::CurrentSurfaceTexture::Success(surface_texture) => surface_texture,
++            _ => {
++                eprintln!("Surface Fail");
++                return;
++            }
++        };
+         let view = output
+             .texture
+             .create_view(&wgpu::TextureViewDescriptor::default());
+@@ -307,7 +312,6 @@ impl State<'_> {
+         }
+         self.queue.submit(std::iter::once(encoder.finish()));
+         output.present();
+-        Ok(())
+     }
+     pub fn update(&mut self, delta_time: Duration) {
+         // 更新 delta_time
+@@ -328,25 +332,10 @@ impl State<'_> {
+     }
+ }
+ 
+-async fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
+-    for backend in wgpu::Backends::all() {
+-        if let Some(instance) = try_wgpu_backend(backend).await {
+-            return Ok((instance, backend));
+-        }
+-    }
+-    Err(anyhow!("没有找到可用渲染后端"))
+-}
+-async fn try_wgpu_backend(backend: wgpu::Backends) -> Option<wgpu::Instance> {
+-    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+-        backends: backend,
+-        flags: wgpu::InstanceFlags::default().with_env(),
+-        ..Default::default()
+-    });
+-    if instance.enumerate_adapters(backend).await.is_empty() {
+-        None
+-    } else {
+-        Some(instance)
+-    }
++async fn create_wgpu_instance(display_handle: OwnedDisplayHandle) -> wgpu::Instance {
++    wgpu::Instance::new(wgpu::InstanceDescriptor::new_with_display_handle(Box::new(
++        display_handle,
++    )))
+ }
+ 
+ #[repr(C)] // 保证结构体的内存布局和C语言一致，用于和C语言交互，共享数据
+diff --git a/copy_texture_to_texture/src/app.rs b/copy_texture_to_texture/src/app.rs
+index 32cfd87..9365154 100644
+--- a/copy_texture_to_texture/src/app.rs
++++ b/copy_texture_to_texture/src/app.rs
+@@ -20,7 +20,9 @@ impl ApplicationHandler for App<'_> {
+                 .unwrap(),
+         );
+         if let Some(window) = &self.window {
+-            self.state = Some(futures::executor::block_on(State::new(window)).unwrap());
++            let display_handle = event_loop.owned_display_handle();
++            self.state =
++                Some(futures::executor::block_on(State::new(window, display_handle)).unwrap());
+         }
+     }
+ 
+@@ -36,15 +38,7 @@ impl ApplicationHandler for App<'_> {
+             }
+             WindowEvent::RedrawRequested => {
+                 if let Some(state) = &mut self.state {
+-                    match state.render() {
+-                        Ok(_) => {}
+-                        Err(wgpu::SurfaceError::Lost) => {
+-                            dbg!("丢失平面");
+-                        }
+-                        Err(e) => {
+-                            eprintln!("{:?}", e);
+-                        }
+-                    }
++                    state.render();
+                 }
+             }
+             WindowEvent::Resized(physical_size) => {
+diff --git a/copy_texture_to_texture/src/lib.rs b/copy_texture_to_texture/src/lib.rs
+index 5bb607c..cbb4956 100644
+--- a/copy_texture_to_texture/src/lib.rs
++++ b/copy_texture_to_texture/src/lib.rs
+@@ -1,8 +1,7 @@
+ mod vertex;
+-use anyhow::anyhow;
+ use vertex::{INDICES, MESH, Mesh, RECTANGLE, calc_bundle, mesh_size};
+-use wgpu::{SurfaceError, util::DeviceExt};
+-use winit::{dpi::PhysicalSize, window::Window};
++use wgpu::util::DeviceExt;
++use winit::{dpi::PhysicalSize, event_loop::OwnedDisplayHandle, window::Window};
+ pub struct State<'window> {
+     surface: wgpu::Surface<'window>,
+     device: wgpu::Device,
+@@ -17,8 +16,8 @@ pub struct State<'window> {
+ }
+ 
+ impl State<'_> {
+-    pub async fn new(window: &Window) -> anyhow::Result<Self> {
+-        let (instance, _backend) = create_wgpu_instance().await?;
++    pub async fn new(window: &Window, display_handle: OwnedDisplayHandle) -> anyhow::Result<Self> {
++        let instance = create_wgpu_instance(display_handle);
+         let surface = unsafe {
+             instance.create_surface_unsafe(wgpu::SurfaceTargetUnsafe::from_window(&window)?)
+         }?;
+@@ -137,7 +136,7 @@ impl State<'_> {
+         let texture_render_pipeline_layout =
+             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                 label: Some("纹理管线布局"),
+-                bind_group_layouts: &[&bind_group_layout],
++                bind_group_layouts: &[Some(&bind_group_layout)],
+                 immediate_size: 0,
+             });
+ 
+@@ -214,8 +213,7 @@ impl State<'_> {
+         })
+     }
+ 
+-    pub fn render(&mut self) -> Result<(), SurfaceError> {
+-        // let output = self.surface.get_current_texture()?;
++    pub fn render(&mut self) {
+         let size = wgpu::Extent3d {
+             width: self.config.width,
+             height: self.config.height,
+@@ -337,7 +335,13 @@ impl State<'_> {
+                 },
+             ],
+         });
+-        let output = self.surface.get_current_texture()?;
++        let output = match self.surface.get_current_texture() {
++            wgpu::CurrentSurfaceTexture::Success(surface_texture) => surface_texture,
++            _ => {
++                eprintln!("Surface Fail");
++                return;
++            }
++        };
+ 
+         let view = output
+             .texture
+@@ -365,7 +369,6 @@ impl State<'_> {
+         }
+         self.queue.submit(std::iter::once(encoder.finish()));
+         output.present();
+-        Ok(())
+     }
+ 
+     pub fn resize(&mut self, physical_size: PhysicalSize<u32>) {
+@@ -377,26 +380,10 @@ impl State<'_> {
+     }
+ }
+ 
+-async fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
+-    for backend in wgpu::Backends::all() {
+-        if let Some(instance) = try_wgpu_backend(backend).await {
+-            return Ok((instance, backend));
+-        }
+-    }
+-    Err(anyhow!("没有找到可用渲染后端"))
+-}
+-
+-async fn try_wgpu_backend(backends: wgpu::Backends) -> Option<wgpu::Instance> {
+-    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+-        backends,
+-        flags: wgpu::InstanceFlags::default().with_env(),
+-        ..Default::default()
+-    });
+-    if instance.enumerate_adapters(backends).await.is_empty() {
+-        None
+-    } else {
+-        Some(instance)
+-    }
++fn create_wgpu_instance(display_handle: OwnedDisplayHandle) -> wgpu::Instance {
++    wgpu::Instance::new(wgpu::InstanceDescriptor::new_with_display_handle(Box::new(
++        display_handle,
++    )))
+ }
+ 
+ pub fn create_depth_texture(
+diff --git a/index_buffer/src/app.rs b/index_buffer/src/app.rs
+index da48ca3..2f38e62 100644
+--- a/index_buffer/src/app.rs
++++ b/index_buffer/src/app.rs
+@@ -19,7 +19,9 @@ impl ApplicationHandler for App<'_> {
+                 .unwrap(),
+         );
+         if let Some(window) = &self.window {
+-            self.state = Some(futures::executor::block_on(State::new(window)).unwrap());
++            let display_handle = event_loop.owned_display_handle();
++            self.state =
++                Some(futures::executor::block_on(State::new(window, display_handle)).unwrap());
+         }
+     }
+ 
+@@ -36,15 +38,7 @@ impl ApplicationHandler for App<'_> {
+             WindowEvent::RedrawRequested => {
+                 if let Some(state) = &mut self.state {
+                     state.update();
+-                    match state.render() {
+-                        Ok(_) => {}
+-                        Err(wgpu::SurfaceError::Lost) => {
+-                            dbg!("surface lost");
+-                        }
+-                        Err(e) => {
+-                            eprintln!("{:?}", e);
+-                        }
+-                    }
++                    state.render();
+                 }
+             }
+             WindowEvent::Resized(physical_size) => {
+diff --git a/index_buffer/src/lib.rs b/index_buffer/src/lib.rs
+index c87d3fa..63c29cf 100644
+--- a/index_buffer/src/lib.rs
++++ b/index_buffer/src/lib.rs
+@@ -1,6 +1,5 @@
+-use anyhow::anyhow;
+-use wgpu::{SurfaceError, TextureFormat, util::DeviceExt};
+-use winit::window::Window;
++use wgpu::{TextureFormat, util::DeviceExt};
++use winit::{event_loop::OwnedDisplayHandle, window::Window};
+ pub struct State<'window> {
+     surface: wgpu::Surface<'window>,
+     device: wgpu::Device,
+@@ -12,8 +11,8 @@ pub struct State<'window> {
+ }
+ 
+ impl State<'_> {
+-    pub async fn new(window: &Window) -> anyhow::Result<Self> {
+-        let (instance, _backend) = create_wgpu_instance().await?;
++    pub async fn new(window: &Window, display_handle: OwnedDisplayHandle) -> anyhow::Result<Self> {
++        let instance = create_wgpu_instance(display_handle);
+         let surface = unsafe {
+             instance.create_surface_unsafe(wgpu::SurfaceTargetUnsafe::from_window(&window)?)
+         }?;
+@@ -130,8 +129,14 @@ impl State<'_> {
+             index_buffer,
+         })
+     }
+-    pub fn render(&mut self) -> Result<(), SurfaceError> {
+-        let output = self.surface.get_current_texture()?;
++    pub fn render(&mut self) {
++        let output = match self.surface.get_current_texture() {
++            wgpu::CurrentSurfaceTexture::Success(surface_texture) => surface_texture,
++            _ => {
++                eprintln!("Surface Fail");
++                return;
++            }
++        };
+         let view = output
+             .texture
+             .create_view(&wgpu::TextureViewDescriptor::default());
+@@ -168,7 +173,6 @@ impl State<'_> {
+         }
+         self.queue.submit(std::iter::once(encoder.finish()));
+         output.present();
+-        Ok(())
+     }
+     pub fn update(&mut self) {}
+     pub fn resize(&mut self, physical_size: winit::dpi::PhysicalSize<u32>) {
+@@ -180,25 +184,10 @@ impl State<'_> {
+     }
+ }
+ 
+-async fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
+-    for backend in wgpu::Backends::all() {
+-        if let Some(instance) = try_wgpu_backend(backend).await {
+-            return Ok((instance, backend));
+-        }
+-    }
+-    Err(anyhow!("没有找到可用渲染后端"))
+-}
+-async fn try_wgpu_backend(backend: wgpu::Backends) -> Option<wgpu::Instance> {
+-    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+-        backends: backend,
+-        flags: wgpu::InstanceFlags::default().with_env(),
+-        ..Default::default()
+-    });
+-    if instance.enumerate_adapters(backend).await.is_empty() {
+-        None
+-    } else {
+-        Some(instance)
+-    }
++fn create_wgpu_instance(display_handle: OwnedDisplayHandle) -> wgpu::Instance {
++    wgpu::Instance::new(wgpu::InstanceDescriptor::new_with_display_handle(Box::new(
++        display_handle,
++    )))
+ }
+ 
+ #[repr(C)] // 保证结构体的内存布局和C语言一致，用于和C语言交互，共享数据
+diff --git a/render/src/lib.rs b/render/src/lib.rs
+index da65d0c..7b8fac6 100644
+--- a/render/src/lib.rs
++++ b/render/src/lib.rs
+@@ -24,7 +24,8 @@ impl<'a, T: SpecialRenderPipeline> ApplicationHandler for WinitRunner<'a, T> {
+             .create_window(Window::default_attributes())
+             .unwrap();
+         if let Some(renderer) = &mut self.renderer {
+-            renderer.set_window(window);
++            let display_display = event_loop.owned_display_handle();
++            renderer.set_window(window, display_display);
+         }
+     }
+ 
+diff --git a/render/src/render/mod.rs b/render/src/render/mod.rs
+index b174403..5281ea7 100644
+--- a/render/src/render/mod.rs
++++ b/render/src/render/mod.rs
+@@ -1,5 +1,6 @@
+ use anyhow::Result;
+-use winit::{dpi::PhysicalSize, window::Window};
++use wgpu::CurrentSurfaceTexture;
++use winit::{dpi::PhysicalSize, event_loop::OwnedDisplayHandle, window::Window};
+ 
+ use crate::SpecialRenderPipeline;
+ 
+@@ -16,13 +17,13 @@ pub struct RenderRes<'window> {
+ impl RenderRes<'_> {
+     pub async fn new(
+         window: &Window,
++        display_handle: OwnedDisplayHandle,
+         special_render_pipeline: &impl SpecialRenderPipeline,
+     ) -> Result<Self> {
+         let size = window.inner_size();
+-        let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+-            backends: wgpu::Backends::PRIMARY,
+-            ..Default::default()
+-        });
++        let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::new_with_display_handle(
++            Box::new(display_handle),
++        ));
+         let surface = unsafe {
+             instance.create_surface_unsafe(wgpu::SurfaceTargetUnsafe::from_window(window)?)?
+         };
+@@ -104,7 +105,13 @@ impl<T: SpecialRenderPipeline> Renderer<'_, T> {
+         let Some(render_res) = &mut self.render_res else {
+             return Err(anyhow::Error::msg("render_res 不存在"));
+         };
+-        let output = render_res.surface.get_current_texture()?;
++        let output = match render_res.surface.get_current_texture() {
++            CurrentSurfaceTexture::Success(surface_texture) => surface_texture,
++            _ => {
++                eprintln!("Surface Fail");
++                return Ok(());
++            }
++        };
+         let view = output
+             .texture
+             .create_view(&wgpu::TextureViewDescriptor::default());
+@@ -138,9 +145,11 @@ impl<T: SpecialRenderPipeline> Renderer<'_, T> {
+         Ok(())
+     }
+ 
+-    pub(crate) fn set_window(&mut self, window: Window) {
+-        self.render_res =
+-            Some(futures::executor::block_on(RenderRes::new(&window, &self.render)).unwrap());
++    pub(crate) fn set_window(&mut self, window: Window, display_handle: OwnedDisplayHandle) {
++        self.render_res = Some(
++            futures::executor::block_on(RenderRes::new(&window, display_handle, &self.render))
++                .unwrap(),
++        );
+         self.window = Some(window);
+     }
+ }
+diff --git a/render_to_image/examples/computer_gauss.rs b/render_to_image/examples/computer_gauss.rs
+index fbff9dd..d7e95b3 100644
+--- a/render_to_image/examples/computer_gauss.rs
++++ b/render_to_image/examples/computer_gauss.rs
+@@ -102,7 +102,7 @@ fn main() -> anyhow::Result<()> {
+ 
+     let compute_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+         label: Some("compute_pipeline_layout"),
+-        bind_group_layouts: &[&texture_bind_group_layout],
++        bind_group_layouts: &[Some(&texture_bind_group_layout)],
+         immediate_size: 0,
+     });
+ 
+diff --git a/render_to_image/src/backend.rs b/render_to_image/src/backend.rs
+index 8283fdc..37c7de8 100644
+--- a/render_to_image/src/backend.rs
++++ b/render_to_image/src/backend.rs
+@@ -1,39 +1,13 @@
+ use anyhow::anyhow;
+ use tracing::info;
+ 
+-async fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
+-    for backend in wgpu::Backends::all() {
+-        if let Some(instance) = try_wgpu_backend(backend).await {
+-            return Ok((instance, backend));
+-        }
+-    }
+-    Err(anyhow!("没有找到可用渲染后端"))
+-}
+-
+-async fn try_wgpu_backend(backends: wgpu::Backends) -> Option<wgpu::Instance> {
+-    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+-        backends,
+-        flags: wgpu::InstanceFlags::default().with_env(),
+-        ..Default::default()
+-    });
+-    if instance.enumerate_adapters(backends).await.is_empty() {
+-        None
+-    } else {
+-        Some(instance)
+-    }
+-}
+-
+ pub async fn get_device_and_queue() -> anyhow::Result<(wgpu::Device, wgpu::Queue)> {
+-    let (instance, backend) = create_wgpu_instance().await?;
++    let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
+ 
+-    let (adapter, device, queue) = request_adapter_and_device(
+-        backend,
+-        &instance,
+-        None,
+-        wgpu::PowerPreference::HighPerformance,
+-    )
+-    .await
+-    .map_err(|e| anyhow!(e.to_string()))?;
++    let (adapter, device, queue) =
++        request_adapter_and_device(&instance, None, wgpu::PowerPreference::HighPerformance)
++            .await
++            .map_err(|e| anyhow!(e.to_string()))?;
+ 
+     let adapter_info = adapter.get_info();
+     info!("适配器信息：{:?}", adapter_info);
+@@ -43,7 +17,6 @@ pub async fn get_device_and_queue() -> anyhow::Result<(wgpu::Device, wgpu::Queue
+ type Error = Box<dyn std::error::Error>;
+ 
+ pub async fn request_adapter_and_device(
+-    backend: wgpu::Backends,
+     instance: &wgpu::Instance,
+     surface: Option<&wgpu::Surface<'static>>,
+     power_preference: wgpu::PowerPreference,
+@@ -55,14 +28,7 @@ pub async fn request_adapter_and_device(
+             force_fallback_adapter: false,
+         })
+         .await
+-        .map_err(|_| {
+-            let names = get_backend_names(backend);
+-            if names.is_empty() {
+-                "没有找到适配器".to_string()
+-            } else {
+-                format!("没有找到适配器，可用适配器：{}", names.join(", "))
+-            }
+-        })?;
++        .map_err(|_| String::from("没有找到适配器"))?;
+ 
+     let mut features = Default::default();
+ 
+diff --git a/render_to_image/src/render.rs b/render_to_image/src/render.rs
+index 8283fdc..10ec139 100644
+--- a/render_to_image/src/render.rs
++++ b/render_to_image/src/render.rs
+@@ -1,39 +1,17 @@
+ use anyhow::anyhow;
+ use tracing::info;
+ 
+-async fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
+-    for backend in wgpu::Backends::all() {
+-        if let Some(instance) = try_wgpu_backend(backend).await {
+-            return Ok((instance, backend));
+-        }
+-    }
+-    Err(anyhow!("没有找到可用渲染后端"))
+-}
+-
+-async fn try_wgpu_backend(backends: wgpu::Backends) -> Option<wgpu::Instance> {
+-    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+-        backends,
+-        flags: wgpu::InstanceFlags::default().with_env(),
+-        ..Default::default()
+-    });
+-    if instance.enumerate_adapters(backends).await.is_empty() {
+-        None
+-    } else {
+-        Some(instance)
+-    }
++fn create_wgpu_instance() -> wgpu::Instance {
++    wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle())
+ }
+ 
+ pub async fn get_device_and_queue() -> anyhow::Result<(wgpu::Device, wgpu::Queue)> {
+-    let (instance, backend) = create_wgpu_instance().await?;
++    let instance = create_wgpu_instance();
+ 
+-    let (adapter, device, queue) = request_adapter_and_device(
+-        backend,
+-        &instance,
+-        None,
+-        wgpu::PowerPreference::HighPerformance,
+-    )
+-    .await
+-    .map_err(|e| anyhow!(e.to_string()))?;
++    let (adapter, device, queue) =
++        request_adapter_and_device(&instance, None, wgpu::PowerPreference::HighPerformance)
++            .await
++            .map_err(|e| anyhow!(e.to_string()))?;
+ 
+     let adapter_info = adapter.get_info();
+     info!("适配器信息：{:?}", adapter_info);
+@@ -43,7 +21,6 @@ pub async fn get_device_and_queue() -> anyhow::Result<(wgpu::Device, wgpu::Queue
+ type Error = Box<dyn std::error::Error>;
+ 
+ pub async fn request_adapter_and_device(
+-    backend: wgpu::Backends,
+     instance: &wgpu::Instance,
+     surface: Option<&wgpu::Surface<'static>>,
+     power_preference: wgpu::PowerPreference,
+@@ -55,14 +32,7 @@ pub async fn request_adapter_and_device(
+             force_fallback_adapter: false,
+         })
+         .await
+-        .map_err(|_| {
+-            let names = get_backend_names(backend);
+-            if names.is_empty() {
+-                "没有找到适配器".to_string()
+-            } else {
+-                format!("没有找到适配器，可用适配器：{}", names.join(", "))
+-            }
+-        })?;
++        .map_err(|_| String::from("没有找到适配器"))?;
+ 
+     let mut features = Default::default();
+ 
+@@ -90,25 +60,3 @@ pub async fn request_adapter_and_device(
+         .await?;
+     Ok((adapter, device, queue))
+ }
+-
+-pub fn get_backend_names(backends: wgpu::Backends) -> Vec<&'static str> {
+-    let mut names = Vec::new();
+-
+-    if backends.contains(wgpu::Backends::VULKAN) {
+-        names.push("Vulkan");
+-    }
+-    if backends.contains(wgpu::Backends::DX12) {
+-        names.push("DirectX 12");
+-    }
+-    if backends.contains(wgpu::Backends::METAL) {
+-        names.push("Metal");
+-    }
+-    if backends.contains(wgpu::Backends::GL) {
+-        names.push("Open GL");
+-    }
+-    if backends.contains(wgpu::Backends::BROWSER_WEBGPU) {
+-        names.push("Web GPU");
+-    }
+-
+-    names
+-}
+diff --git a/shader_transform/src/app.rs b/shader_transform/src/app.rs
+index 3f46b57..557f2c6 100644
+--- a/shader_transform/src/app.rs
++++ b/shader_transform/src/app.rs
+@@ -19,7 +19,9 @@ impl ApplicationHandler for App<'_> {
+                 .unwrap(),
+         );
+         if let Some(window) = &self.window {
+-            self.state = Some(futures::executor::block_on(State::new(window)).unwrap());
++            let display_handle = event_loop.owned_display_handle();
++            self.state =
++                Some(futures::executor::block_on(State::new(window, display_handle)).unwrap());
+         }
+     }
+ 
+@@ -36,15 +38,7 @@ impl ApplicationHandler for App<'_> {
+             WindowEvent::RedrawRequested => {
+                 if let Some(state) = &mut self.state {
+                     state.update();
+-                    match state.render() {
+-                        Ok(_) => {}
+-                        Err(wgpu::SurfaceError::Lost) => {
+-                            dbg!("surface lost");
+-                        }
+-                        Err(e) => {
+-                            eprintln!("{:?}", e);
+-                        }
+-                    }
++                    state.render();
+                 }
+             }
+             WindowEvent::Resized(physical_size) => {
+diff --git a/shader_transform/src/lib.rs b/shader_transform/src/lib.rs
+index fad8b68..a3e0831 100644
+--- a/shader_transform/src/lib.rs
++++ b/shader_transform/src/lib.rs
+@@ -1,6 +1,4 @@
+-use anyhow::anyhow;
+-use wgpu::SurfaceError;
+-use winit::window::Window;
++use winit::{event_loop::OwnedDisplayHandle, window::Window};
+ pub struct State<'window> {
+     surface: wgpu::Surface<'window>,
+     device: wgpu::Device,
+@@ -10,8 +8,8 @@ pub struct State<'window> {
+ }
+ 
+ impl State<'_> {
+-    pub async fn new(window: &Window) -> anyhow::Result<Self> {
+-        let (instance, _backend) = create_wgpu_instance().await?;
++    pub async fn new(window: &Window, display_handle: OwnedDisplayHandle) -> anyhow::Result<Self> {
++        let instance = create_wgpu_instance(display_handle);
+         let surface = unsafe {
+             instance.create_surface_unsafe(wgpu::SurfaceTargetUnsafe::from_window(&window)?)
+         }?;
+@@ -103,8 +101,14 @@ impl State<'_> {
+             render_pipeline,
+         })
+     }
+-    pub fn render(&mut self) -> Result<(), SurfaceError> {
+-        let output = self.surface.get_current_texture()?;
++    pub fn render(&mut self) {
++        let output = match self.surface.get_current_texture() {
++            wgpu::CurrentSurfaceTexture::Success(surface_texture) => surface_texture,
++            _ => {
++                eprintln!("Surface Fail");
++                return;
++            }
++        };
+         let view = output
+             .texture
+             .create_view(&wgpu::TextureViewDescriptor::default());
+@@ -138,7 +142,6 @@ impl State<'_> {
+         }
+         self.queue.submit(std::iter::once(encoder.finish()));
+         output.present();
+-        Ok(())
+     }
+     pub fn update(&mut self) {}
+     pub fn resize(&mut self, physical_size: winit::dpi::PhysicalSize<u32>) {
+@@ -150,23 +153,8 @@ impl State<'_> {
+     }
+ }
+ 
+-async fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
+-    for backend in wgpu::Backends::all() {
+-        if let Some(instance) = try_wgpu_backend(backend).await {
+-            return Ok((instance, backend));
+-        }
+-    }
+-    Err(anyhow!("没有找到可用渲染后端"))
+-}
+-async fn try_wgpu_backend(backend: wgpu::Backends) -> Option<wgpu::Instance> {
+-    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+-        backends: backend,
+-        flags: wgpu::InstanceFlags::default().with_env(),
+-        ..Default::default()
+-    });
+-    if instance.enumerate_adapters(backend).await.is_empty() {
+-        None
+-    } else {
+-        Some(instance)
+-    }
++fn create_wgpu_instance(display_handle: OwnedDisplayHandle) -> wgpu::Instance {
++    wgpu::Instance::new(wgpu::InstanceDescriptor::new_with_display_handle(Box::new(
++        display_handle,
++    )))
+ }
+diff --git a/texture/src/app.rs b/texture/src/app.rs
+index e7c4608..ee88389 100644
+--- a/texture/src/app.rs
++++ b/texture/src/app.rs
+@@ -19,7 +19,9 @@ impl ApplicationHandler for App<'_> {
+                 .unwrap(),
+         );
+         if let Some(window) = &self.window {
+-            self.state = Some(futures::executor::block_on(State::new(window)).unwrap());
++            let display_handle = event_loop.owned_display_handle();
++            self.state =
++                Some(futures::executor::block_on(State::new(window, display_handle)).unwrap());
+         }
+     }
+ 
+@@ -36,15 +38,7 @@ impl ApplicationHandler for App<'_> {
+             WindowEvent::RedrawRequested => {
+                 if let Some(state) = &mut self.state {
+                     state.update();
+-                    match state.render() {
+-                        Ok(_) => {}
+-                        Err(wgpu::SurfaceError::Lost) => {
+-                            dbg!("surface lost");
+-                        }
+-                        Err(e) => {
+-                            eprintln!("{:?}", e);
+-                        }
+-                    }
++                    state.render();
+                 }
+             }
+             WindowEvent::Resized(physical_size) => {
+diff --git a/texture/src/lib.rs b/texture/src/lib.rs
+index dfa9d2e..19cb3c2 100644
+--- a/texture/src/lib.rs
++++ b/texture/src/lib.rs
+@@ -1,7 +1,6 @@
+-use anyhow::anyhow;
+ use image::GenericImageView;
+-use wgpu::{SurfaceError, util::DeviceExt};
+-use winit::window::Window;
++use wgpu::util::DeviceExt;
++use winit::{event_loop::OwnedDisplayHandle, window::Window};
+ pub struct State<'window> {
+     surface: wgpu::Surface<'window>,
+     device: wgpu::Device,
+@@ -14,8 +13,8 @@ pub struct State<'window> {
+ }
+ 
+ impl State<'_> {
+-    pub async fn new(window: &Window) -> anyhow::Result<Self> {
+-        let (instance, _backend) = create_wgpu_instance().await?;
++    pub async fn new(window: &Window, display_handle: OwnedDisplayHandle) -> anyhow::Result<Self> {
++        let instance = create_wgpu_instance(display_handle);
+         let surface = unsafe {
+             instance.create_surface_unsafe(wgpu::SurfaceTargetUnsafe::from_window(&window)?)
+         }?;
+@@ -168,7 +167,7 @@ impl State<'_> {
+         let render_pipeline_layout =
+             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                 label: Some("Render Pipeline Layout"),
+-                bind_group_layouts: &[&texture_bind_group_layout],
++                bind_group_layouts: &[Some(&texture_bind_group_layout)],
+                 immediate_size: 0,
+             });
+         let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+@@ -225,8 +224,14 @@ impl State<'_> {
+             diffuse_bind_group,
+         })
+     }
+-    pub fn render(&mut self) -> Result<(), SurfaceError> {
+-        let output = self.surface.get_current_texture()?;
++    pub fn render(&mut self) {
++        let output = match self.surface.get_current_texture() {
++            wgpu::CurrentSurfaceTexture::Success(surface_texture) => surface_texture,
++            _ => {
++                eprintln!("Surface Fail");
++                return;
++            }
++        };
+         let view = output
+             .texture
+             .create_view(&wgpu::TextureViewDescriptor::default());
+@@ -265,7 +270,6 @@ impl State<'_> {
+         }
+         self.queue.submit(std::iter::once(encoder.finish()));
+         output.present();
+-        Ok(())
+     }
+     pub fn update(&mut self) {}
+     pub fn resize(&mut self, physical_size: winit::dpi::PhysicalSize<u32>) {
+@@ -277,25 +281,10 @@ impl State<'_> {
+     }
+ }
+ 
+-async fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
+-    for backend in wgpu::Backends::all() {
+-        if let Some(instance) = try_wgpu_backend(backend).await {
+-            return Ok((instance, backend));
+-        }
+-    }
+-    Err(anyhow!("没有找到可用渲染后端"))
+-}
+-async fn try_wgpu_backend(backend: wgpu::Backends) -> Option<wgpu::Instance> {
+-    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+-        backends: backend,
+-        flags: wgpu::InstanceFlags::default().with_env(),
+-        ..Default::default()
+-    });
+-    if instance.enumerate_adapters(backend).await.is_empty() {
+-        None
+-    } else {
+-        Some(instance)
+-    }
++fn create_wgpu_instance(display_handle: OwnedDisplayHandle) -> wgpu::Instance {
++    wgpu::Instance::new(wgpu::InstanceDescriptor::new_with_display_handle(Box::new(
++        display_handle,
++    )))
+ }
+ 
+ #[repr(C)] // 保证结构体的内存布局和C语言一致，用于和C语言交互，共享数据
+diff --git a/transform/src/app.rs b/transform/src/app.rs
+index 016df02..c2bda6b 100644
+--- a/transform/src/app.rs
++++ b/transform/src/app.rs
+@@ -22,7 +22,9 @@ impl ApplicationHandler for App<'_> {
+                 .unwrap(),
+         );
+         if let Some(window) = &self.window {
+-            self.state = Some(futures::executor::block_on(State::new(window)).unwrap());
++            let display_handle = event_loop.owned_display_handle();
++            self.state =
++                Some(futures::executor::block_on(State::new(window, display_handle)).unwrap());
+         }
+         self.time = Some(Instant::now());
+     }
+@@ -40,15 +42,7 @@ impl ApplicationHandler for App<'_> {
+             WindowEvent::RedrawRequested => {
+                 if let Some(state) = &mut self.state {
+                     state.update();
+-                    match state.render() {
+-                        Ok(_) => {}
+-                        Err(wgpu::SurfaceError::Lost) => {
+-                            dbg!("surface lost");
+-                        }
+-                        Err(e) => {
+-                            eprintln!("{:?}", e);
+-                        }
+-                    }
++                    state.render();
+                 }
+             }
+             WindowEvent::Resized(physical_size) => {
+@@ -69,7 +63,7 @@ impl ApplicationHandler for App<'_> {
+             self.time = Some(new_time);
+             if let Some(state) = &mut self.state {
+                 state.update();
+-                state.render().unwrap();
++                state.render();
+             }
+         }
+     }
+diff --git a/transform/src/lib.rs b/transform/src/lib.rs
+index a4bd21d..40672ee 100644
+--- a/transform/src/lib.rs
++++ b/transform/src/lib.rs
+@@ -1,7 +1,6 @@
+-use anyhow::anyhow;
+ use glam::{Mat4, Vec3};
+-use wgpu::{SurfaceError, util::DeviceExt};
+-use winit::window::Window;
++use wgpu::util::DeviceExt;
++use winit::{event_loop::OwnedDisplayHandle, window::Window};
+ pub struct State<'window> {
+     surface: wgpu::Surface<'window>,
+     device: wgpu::Device,
+@@ -14,8 +13,8 @@ pub struct State<'window> {
+ }
+ 
+ impl State<'_> {
+-    pub async fn new(window: &Window) -> anyhow::Result<Self> {
+-        let (instance, _backend) = create_wgpu_instance().await?;
++    pub async fn new(window: &Window, display_handle: OwnedDisplayHandle) -> anyhow::Result<Self> {
++        let instance = create_wgpu_instance(display_handle);
+         let surface = unsafe {
+             instance.create_surface_unsafe(wgpu::SurfaceTargetUnsafe::from_window(&window)?)
+         }?;
+@@ -128,8 +127,14 @@ impl State<'_> {
+             num_vertices: vertex.len() as u32,
+         })
+     }
+-    pub fn render(&mut self) -> Result<(), SurfaceError> {
+-        let output = self.surface.get_current_texture()?;
++    pub fn render(&mut self) {
++        let output = match self.surface.get_current_texture() {
++            wgpu::CurrentSurfaceTexture::Success(surface_texture) => surface_texture,
++            _ => {
++                eprintln!("Surface Fail");
++                return;
++            }
++        };
+         let view = output
+             .texture
+             .create_view(&wgpu::TextureViewDescriptor::default());
+@@ -166,7 +171,6 @@ impl State<'_> {
+         }
+         self.queue.submit(std::iter::once(encoder.finish()));
+         output.present();
+-        Ok(())
+     }
+     pub fn update(&mut self) {
+         let rotation = glam::Mat4::from_rotation_z(0.01);
+@@ -188,25 +192,10 @@ impl State<'_> {
+     }
+ }
+ 
+-async fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
+-    for backend in wgpu::Backends::all() {
+-        if let Some(instance) = try_wgpu_backend(backend).await {
+-            return Ok((instance, backend));
+-        }
+-    }
+-    Err(anyhow!("没有找到可用渲染后端"))
+-}
+-async fn try_wgpu_backend(backend: wgpu::Backends) -> Option<wgpu::Instance> {
+-    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+-        backends: backend,
+-        flags: wgpu::InstanceFlags::default().with_env(),
+-        ..Default::default()
+-    });
+-    if instance.enumerate_adapters(backend).await.is_empty() {
+-        None
+-    } else {
+-        Some(instance)
+-    }
++fn create_wgpu_instance(display_handle: OwnedDisplayHandle) -> wgpu::Instance {
++    wgpu::Instance::new(wgpu::InstanceDescriptor::new_with_display_handle(Box::new(
++        display_handle,
++    )))
+ }
+ 
+ #[repr(C)] // 保证结构体的内存布局和C语言一致，用于和C语言交互，共享数据
+diff --git a/vertex_buffer/src/app.rs b/vertex_buffer/src/app.rs
+index 06ac0bb..64e3e31 100644
+--- a/vertex_buffer/src/app.rs
++++ b/vertex_buffer/src/app.rs
+@@ -19,7 +19,9 @@ impl ApplicationHandler for App<'_> {
+                 .unwrap(),
+         );
+         if let Some(window) = &self.window {
+-            self.state = Some(futures::executor::block_on(State::new(window)).unwrap());
++            let display_handle = event_loop.owned_display_handle();
++            self.state =
++                Some(futures::executor::block_on(State::new(window, display_handle)).unwrap());
+         }
+     }
+ 
+@@ -36,15 +38,7 @@ impl ApplicationHandler for App<'_> {
+             WindowEvent::RedrawRequested => {
+                 if let Some(state) = &mut self.state {
+                     state.update();
+-                    match state.render() {
+-                        Ok(_) => {}
+-                        Err(wgpu::SurfaceError::Lost) => {
+-                            dbg!("surface lost");
+-                        }
+-                        Err(e) => {
+-                            eprintln!("{:?}", e);
+-                        }
+-                    }
++                    state.render();
+                 }
+             }
+             WindowEvent::Resized(physical_size) => {
+diff --git a/vertex_buffer/src/lib.rs b/vertex_buffer/src/lib.rs
+index e766212..4d0ca6d 100644
+--- a/vertex_buffer/src/lib.rs
++++ b/vertex_buffer/src/lib.rs
+@@ -1,6 +1,5 @@
+-use anyhow::anyhow;
+-use wgpu::{SurfaceError, util::DeviceExt};
+-use winit::window::Window;
++use wgpu::util::DeviceExt;
++use winit::{event_loop::OwnedDisplayHandle, window::Window};
+ pub struct State<'window> {
+     surface: wgpu::Surface<'window>,
+     device: wgpu::Device,
+@@ -12,10 +11,10 @@ pub struct State<'window> {
+ }
+ 
+ impl State<'_> {
+-    pub async fn new(window: &Window) -> anyhow::Result<Self> {
+-        let (instance, _backend) = create_wgpu_instance().await?;
++    pub async fn new(window: &Window, display_handle: OwnedDisplayHandle) -> anyhow::Result<Self> {
++        let instance = create_wgpu_instance(display_handle);
+         let surface = unsafe {
+-            instance.create_surface_unsafe(wgpu::SurfaceTargetUnsafe::from_window(&window)?)
++            instance.create_surface_unsafe(wgpu::SurfaceTargetUnsafe::from_window(window)?)
+         }?;
+         let adapter = instance
+             .request_adapter(&wgpu::RequestAdapterOptions {
+@@ -25,6 +24,7 @@ impl State<'_> {
+             })
+             .await
+             .expect("没有找到可用适配器");
++        println!("适配器信息：{:?}", adapter.get_info());
+         let (device, queue) = adapter
+             .request_device(&wgpu::DeviceDescriptor {
+                 required_features: wgpu::Features::empty(),
+@@ -113,8 +113,15 @@ impl State<'_> {
+             num_vertices: VERTICES.len() as u32,
+         })
+     }
+-    pub fn render(&mut self) -> Result<(), SurfaceError> {
+-        let output = self.surface.get_current_texture()?;
++    pub fn render(&mut self) {
++        let output = match self.surface.get_current_texture() {
++            wgpu::CurrentSurfaceTexture::Success(surface_texture) => surface_texture,
++            _ => {
++                eprintln!("Surface Fail");
++                return;
++            }
++        };
++
+         let view = output
+             .texture
+             .create_view(&wgpu::TextureViewDescriptor::default());
+@@ -151,7 +158,6 @@ impl State<'_> {
+         }
+         self.queue.submit(std::iter::once(encoder.finish()));
+         output.present();
+-        Ok(())
+     }
+     pub fn update(&mut self) {}
+     pub fn resize(&mut self, physical_size: winit::dpi::PhysicalSize<u32>) {
+@@ -163,25 +169,10 @@ impl State<'_> {
+     }
+ }
+ 
+-async fn create_wgpu_instance() -> anyhow::Result<(wgpu::Instance, wgpu::Backends)> {
+-    for backend in wgpu::Backends::all() {
+-        if let Some(instance) = try_wgpu_backend(backend).await {
+-            return Ok((instance, backend));
+-        }
+-    }
+-    Err(anyhow!("没有找到可用渲染后端"))
+-}
+-async fn try_wgpu_backend(backend: wgpu::Backends) -> Option<wgpu::Instance> {
+-    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+-        backends: backend,
+-        flags: wgpu::InstanceFlags::default().with_env(),
+-        ..Default::default()
+-    });
+-    if instance.enumerate_adapters(backend).await.is_empty() {
+-        None
+-    } else {
+-        Some(instance)
+-    }
++fn create_wgpu_instance(display_handle: OwnedDisplayHandle) -> wgpu::Instance {
++    wgpu::Instance::new(wgpu::InstanceDescriptor::new_with_display_handle(Box::new(
++        display_handle,
++    )))
+ }
+ 
+ #[repr(C)] // 保证结构体的内存布局和C语言一致，用于和C语言交互，共享数据

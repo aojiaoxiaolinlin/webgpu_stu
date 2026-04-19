@@ -1,5 +1,6 @@
 use anyhow::Result;
-use winit::{dpi::PhysicalSize, window::Window};
+use wgpu::CurrentSurfaceTexture;
+use winit::{dpi::PhysicalSize, event_loop::OwnedDisplayHandle, window::Window};
 
 use crate::SpecialRenderPipeline;
 
@@ -16,13 +17,13 @@ pub struct RenderRes<'window> {
 impl RenderRes<'_> {
     pub async fn new(
         window: &Window,
+        display_handle: OwnedDisplayHandle,
         special_render_pipeline: &impl SpecialRenderPipeline,
     ) -> Result<Self> {
         let size = window.inner_size();
-        let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
-            backends: wgpu::Backends::PRIMARY,
-            ..Default::default()
-        });
+        let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::new_with_display_handle(
+            Box::new(display_handle),
+        ));
         let surface = unsafe {
             instance.create_surface_unsafe(wgpu::SurfaceTargetUnsafe::from_window(window)?)?
         };
@@ -104,7 +105,13 @@ impl<T: SpecialRenderPipeline> Renderer<'_, T> {
         let Some(render_res) = &mut self.render_res else {
             return Err(anyhow::Error::msg("render_res 不存在"));
         };
-        let output = render_res.surface.get_current_texture()?;
+        let output = match render_res.surface.get_current_texture() {
+            CurrentSurfaceTexture::Success(surface_texture) => surface_texture,
+            _ => {
+                eprintln!("Surface Fail");
+                return Ok(());
+            }
+        };
         let view = output
             .texture
             .create_view(&wgpu::TextureViewDescriptor::default());
@@ -138,9 +145,11 @@ impl<T: SpecialRenderPipeline> Renderer<'_, T> {
         Ok(())
     }
 
-    pub(crate) fn set_window(&mut self, window: Window) {
-        self.render_res =
-            Some(futures::executor::block_on(RenderRes::new(&window, &self.render)).unwrap());
+    pub(crate) fn set_window(&mut self, window: Window, display_handle: OwnedDisplayHandle) {
+        self.render_res = Some(
+            futures::executor::block_on(RenderRes::new(&window, display_handle, &self.render))
+                .unwrap(),
+        );
         self.window = Some(window);
     }
 }

@@ -24,7 +24,8 @@ impl<'a, T: SpecialRenderPipeline> ApplicationHandler for WinitRunner<'a, T> {
             .create_window(Window::default_attributes())
             .unwrap();
         if let Some(renderer) = &mut self.renderer {
-            renderer.set_window(window);
+            let display_display = event_loop.owned_display_handle();
+            renderer.set_window(window, display_display);
         }
     }
 

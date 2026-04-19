@@ -7,12 +7,13 @@ members = [
     "texture",
     "transform",
     "vertex_buffer",
-    "render_to_image", "compute_particle",
+    "render_to_image",
+    "compute_particle",
 ]
 resolver = "2"
 
 [workspace.dependencies]
-wgpu = "28"
+wgpu = "29"
 winit = "0.30"
 anyhow = "1.0"
 tokio = "1"

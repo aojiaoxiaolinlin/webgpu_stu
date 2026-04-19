@@ -22,7 +22,9 @@ impl ApplicationHandler for App<'_> {
                 .unwrap(),
         );
         if let Some(window) = &self.window {
-            self.state = Some(futures::executor::block_on(State::new(window)).unwrap());
+            let display_handle = event_loop.owned_display_handle();
+            self.state =
+                Some(futures::executor::block_on(State::new(window, display_handle)).unwrap());
         }
         self.time = Some(Instant::now());
     }
@@ -40,15 +42,7 @@ impl ApplicationHandler for App<'_> {
             WindowEvent::RedrawRequested => {
                 if let Some(state) = &mut self.state {
                     state.update();
-                    match state.render() {
-                        Ok(_) => {}
-                        Err(wgpu::SurfaceError::Lost) => {
-                            dbg!("surface lost");
-                        }
-                        Err(e) => {
-                            eprintln!("{:?}", e);
-                        }
-                    }
+                    state.render();
                 }
             }
             WindowEvent::Resized(physical_size) => {
@@ -69,7 +63,7 @@ impl ApplicationHandler for App<'_> {
             self.time = Some(new_time);
             if let Some(state) = &mut self.state {
                 state.update();
-                state.render().unwrap();
+                state.render();
             }
         }
     }

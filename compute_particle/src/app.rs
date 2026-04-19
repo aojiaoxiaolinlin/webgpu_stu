@@ -32,7 +32,9 @@ impl ApplicationHandler for App<'_> {
                 .unwrap(),
         );
         if let Some(window) = &self.window {
-            self.state = Some(futures::executor::block_on(State::new(window)).unwrap());
+            let display_handle = event_loop.owned_display_handle();
+            self.state =
+                Some(futures::executor::block_on(State::new(window, display_handle)).unwrap());
         }
     }
 
@@ -52,15 +54,7 @@ impl ApplicationHandler for App<'_> {
                     let delta_time = now - self.last_render_time;
                     state.update(delta_time);
                     self.last_render_time = now;
-                    match state.render() {
-                        Ok(_) => {}
-                        Err(wgpu::SurfaceError::Lost) => {
-                            dbg!("surface lost");
-                        }
-                        Err(e) => {
-                            eprintln!("{:?}", e);
-                        }
-                    }
+                    state.render();
                 }
             }
             WindowEvent::Resized(physical_size) => {
